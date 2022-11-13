@@ -25,7 +25,8 @@ var TRACK_WIDTH = 200;
 
 const DRAW_INTERVAL = 30;
 
-var racecarPosArray = [];
+var racecarPos;
+var racecarStopsArray = [];
 const RACECAR_WIDTH = 40;
 const RACECAR_HEIGHT = 26;
 
@@ -175,9 +176,7 @@ function drawEverything() {
 function animateRacecars() {
   let aimPos = getGridPointerPos();
 
-  // console.log(ctx.getImageData(aimPos.x, aimPos.y, 1, 1).data);
-
-  let carVect = calculateDirectionVector(currentRacecarPos(), aimPos);
+  let carVect = calculateDirectionVector(racecarPos, aimPos);
 
   let carVectAngle = calculateLineAngle(0, 0, carVect.x, carVect.y);
 
@@ -191,7 +190,8 @@ function animateRacecars() {
     if (frames === ANIMATION_FRAMES) {
       console.log('finished!');
       clearInterval(animInterval);
-      racecarPosArray.push(aimPos);
+      racecarStopsArray.push(aimPos);
+      console.log(racecarStopsArray);
       return;
     }
 
@@ -200,14 +200,12 @@ function animateRacecars() {
 
     drawTrack();
 
-    checkForBoundaryCrash(currentRacecarPos(), carVect);
+    checkForBoundaryCrash(racecarPos, carVect);
 
-    racecarPosArray.push({
-      x: currentRacecarPos().x + carVect.x,
-      y: currentRacecarPos().y + carVect.y,
-    });
+    racecarPos.x += carVect.x;
+    racecarPos.y += carVect.y;
 
-    ctx.setTransform(1, 0, 0, 1, currentRacecarPos().x, currentRacecarPos().y);
+    ctx.setTransform(1, 0, 0, 1, racecarPos.x, racecarPos.y);
 
     ctx.rotate(degrees_to_radians(carVectAngle));
 
@@ -224,12 +222,6 @@ function animateRacecars() {
 
     frames++;
   }, 1000 / 30);
-}
-
-function currentRacecarPos() {
-  return racecarPosArray.length > 0
-    ? racecarPosArray[racecarPosArray.length - 1]
-    : null;
 }
 
 function checkForBoundaryCrash(currentPos, dirVect) {
@@ -346,10 +338,13 @@ function initRacecars() {
     racecarImgs[i].src = `assets/racecar_${i + 1}.png`;
   }
 
-  racecarPosArray.push({
+  // first push to racecarPos array
+  racecarStopsArray.push({
     x: firstDrawingRightPos.x + 1 * startLine.x,
     y: firstDrawingRightPos.y + 1 * startLine.y,
   });
+
+  racecarPos = racecarStopsArray[0];
 
   ctx.rotate(degrees_to_radians(-startLineAngle));
 

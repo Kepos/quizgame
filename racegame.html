@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Race Game</title>
+    <script type="module" src="racegame.js"></script>
+  </head>
+  <body>
+    <div>
+      <div class="canvas-container">
+        <canvas
+          class="canvas"
+          id="grid-canvas"
+          width="8020px"
+          height="8020px"
+        ></canvas>
+        <canvas
+          class="canvas"
+          id="canvas"
+          width="8020px"
+          height="8020px"
+        ></canvas>
+      </div>
+      <div id="grid-pointer"></div>
+    </div>
+  </body>
+  <style>
+    body {
+      background: #004225;
+      margin: 0px;
+    }
+    .canvas-container {
+      position: relative;
+    }
+    .canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      margin: 20px;
+    }
+    #grid-canvas {
+      background: #fff;
+    }
+    #canvas {
+      background: transparent;
+    }
+    #grid-pointer {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: red;
+      top: 50px;
+      left: 50px;
+      border-radius: 20px;
+      pointer-events: none;
+    }
+  </style>
+</html>

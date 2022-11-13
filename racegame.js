@@ -25,7 +25,7 @@ var TRACK_WIDTH = 200;
 
 const DRAW_INTERVAL = 30;
 
-var racecarPos;
+var racecarPosArray = [];
 const RACECAR_WIDTH = 40;
 const RACECAR_HEIGHT = 26;
 
@@ -177,7 +177,7 @@ function animateRacecars() {
 
   // console.log(ctx.getImageData(aimPos.x, aimPos.y, 1, 1).data);
 
-  let carVect = calculateDirectionVector(racecarPos, aimPos);
+  let carVect = calculateDirectionVector(currentRacecarPos(), aimPos);
 
   let carVectAngle = calculateLineAngle(0, 0, carVect.x, carVect.y);
 
@@ -188,16 +188,10 @@ function animateRacecars() {
 
   let frames = 0;
   let animInterval = setInterval(() => {
-    // if (racecarPos.x === aimPos.x && racecarPos.y === aimPos.y) {
-    //   console.log('finished!');
-    //   return;
-    // }
-
     if (frames === ANIMATION_FRAMES) {
-      console.log(racecarPos, aimPos);
       console.log('finished!');
       clearInterval(animInterval);
-      racecarPos = aimPos;
+      racecarPosArray.push(aimPos);
       return;
     }
 
@@ -206,12 +200,14 @@ function animateRacecars() {
 
     drawTrack();
 
-    checkForBoundaryCrash(racecarPos, carVect);
+    checkForBoundaryCrash(currentRacecarPos(), carVect);
 
-    racecarPos.x += carVect.x;
-    racecarPos.y += carVect.y;
+    racecarPosArray.push({
+      x: currentRacecarPos().x + carVect.x,
+      y: currentRacecarPos().y + carVect.y,
+    });
 
-    ctx.setTransform(1, 0, 0, 1, racecarPos.x, racecarPos.y);
+    ctx.setTransform(1, 0, 0, 1, currentRacecarPos().x, currentRacecarPos().y);
 
     ctx.rotate(degrees_to_radians(carVectAngle));
 
@@ -228,6 +224,12 @@ function animateRacecars() {
 
     frames++;
   }, 1000 / 30);
+}
+
+function currentRacecarPos() {
+  return racecarPosArray.length > 0
+    ? racecarPosArray[racecarPosArray.length - 1]
+    : null;
 }
 
 function checkForBoundaryCrash(currentPos, dirVect) {
@@ -344,10 +346,10 @@ function initRacecars() {
     racecarImgs[i].src = `assets/racecar_${i + 1}.png`;
   }
 
-  racecarPos = {
+  racecarPosArray.push({
     x: firstDrawingRightPos.x + 1 * startLine.x,
     y: firstDrawingRightPos.y + 1 * startLine.y,
-  };
+  });
 
   ctx.rotate(degrees_to_radians(-startLineAngle));
 

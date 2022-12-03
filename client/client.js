@@ -1,9 +1,16 @@
 const log = (text) => {};
 
-const onChatSubmitted = (e) => {
+const onChatSubmitted = (sock) => (e) => {
   e.preventDefault();
 };
 
-() => {
-  log('welcome');
-};
+(() => {
+  const sock = io();
+
+  sock.on('message', (text) => {
+    console.log(text);
+    sock.emit('message', text);
+  });
+
+  console.log('welcome');
+})();

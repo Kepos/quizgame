@@ -23,9 +23,9 @@ const GRID_LINE_WIDTH = 1;
 
 const GRID_OFFSET = CANVAS_MARGIN + CANVAS_PADDING;
 
-var TRACK_WIDTH = 120;
+var TRACK_WIDTH = 200;
 
-const DRAW_INTERVAL = 10;
+const DRAW_INTERVAL = 20;
 
 var racecarPos;
 var racecarStopsArray = [];
@@ -233,7 +233,7 @@ function drawGridPointer(evt) {
     Math.round((mousePos.y - GRID_OFFSET) / GRID_BOX_WIDTH) * GRID_BOX_WIDTH +
     GRID_OFFSET;
 
-  // mousePos = calculateNearestValidGridPoint(mousePos);
+  mousePos = calculateNearestValidGridPoint(mousePos);
 
   gridPointer.style.top =
     mousePos.y +

@@ -11,9 +11,9 @@ var gridOptionPointers = [];
 
 const CANVAS_MARGIN = 20;
 // Board width
-const GRID_WIDTH = 1000;
+const GRID_WIDTH = 2200;
 // Board height
-const GRID_HEIGHT = 1000;
+const GRID_HEIGHT = 2200;
 // Board padding
 const CANVAS_PADDING = 10;
 // width / height of the grid boxed
@@ -55,7 +55,8 @@ var trackDrawingActive = false;
 
 // drawing / choosing / driving
 const GAME_STATE_DRAWING = 0;
-const GAME_STATE_RACING = 1;
+const GAME_STATE_PICKING = 1;
+const GAME_STATE_RACING = 2;
 var gameState = GAME_STATE_DRAWING;
 
 window.onload = function () {
@@ -94,7 +95,8 @@ window.onload = function () {
     firstDrawingLeftPos = leftTrackPoints[0];
     drawTrack();
     initRacecars();
-    gameState = GAME_STATE_RACING;
+    gameState = GAME_STATE_PICKING;
+    drawGridOptionPointers();
   }
 
   // document.body.style.zoom = '50%';
@@ -132,7 +134,8 @@ window.onload = function () {
 
         trackDrawingActive = !trackDrawingActive;
         break;
-      case GAME_STATE_RACING:
+      case GAME_STATE_PICKING:
+        gameState = GAME_STATE_RACING;
         hideGridOptionPointers();
         animateRacecars();
         break;
@@ -148,7 +151,7 @@ window.onload = function () {
   function handleMouseMove(evt, touch = false) {
     if (trackDrawingActive) {
       traceTrack(evt);
-    } else if (gameState === GAME_STATE_RACING) {
+    } else if (gameState === GAME_STATE_PICKING) {
       drawGridPointer(evt);
     }
     if (touch) {
@@ -187,7 +190,7 @@ window.onload = function () {
 };
 
 function startRace() {
-  gameState = GAME_STATE_RACING;
+  gameState = GAME_STATE_PICKING;
   drawGridOptionPointers();
 }
 
@@ -234,6 +237,8 @@ function drawGridPointer(evt) {
     GRID_OFFSET;
 
   mousePos = calculateNearestValidGridPoint(mousePos);
+
+  console.log(window.scrollY);
 
   gridPointer.style.top =
     mousePos.y +
@@ -358,6 +363,7 @@ function animateRacecars() {
       racecarStopsArray.push(aimPos);
       console.log('new racecarPos:', racecarPos);
       drawGridOptionPointers();
+      gameState = GAME_STATE_PICKING;
       return;
     }
 

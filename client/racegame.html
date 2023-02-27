@@ -9,7 +9,7 @@
     <script type="module" src="client.js"></script>
   </head>
   <body>
-    <div>
+    <div class="game-container">
       <div class="canvas-container">
         <canvas class="canvas" id="grid-canvas"></canvas>
         <canvas class="canvas" id="canvas"></canvas>
@@ -31,8 +31,12 @@
     body {
       background: #004225;
       margin: 0px;
-      overflow: hidden;
-      position: fixed;
+      overflow: scroll;
+    }
+    .game-container {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
     }
     .canvas-container {
       position: relative;

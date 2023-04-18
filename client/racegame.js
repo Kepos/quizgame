@@ -25,7 +25,7 @@ const GRID_OFFSET = CANVAS_MARGIN + CANVAS_PADDING;
 
 var TRACK_WIDTH = 200;
 
-const DRAW_INTERVAL = 100;
+const DRAW_INTERVAL = 20;
 
 var racecarPos;
 var racecarStopsArray = [];
@@ -79,8 +79,6 @@ window.onload = function () {
   initExplosion();
 
   drawBoard();
-  // setInterval(drawEverything, 1000 / 30);
-  // drawEverything();
 
   ctx.strokeStyle = 'black';
   ctx.lineWidth = 5;
@@ -242,18 +240,25 @@ function calculateNearestValidGridPoint(mousePos) {
   return nextGridOptions[closestIdx];
 }
 
-function drawGridPointer(evt) {
-  let mousePos = calculateMousePos(evt, false);
-  mousePos.x =
-    Math.round((mousePos.x - GRID_OFFSET) / GRID_BOX_WIDTH) * GRID_BOX_WIDTH +
-    GRID_OFFSET;
-  mousePos.y =
-    Math.round((mousePos.y - GRID_OFFSET) / GRID_BOX_WIDTH) * GRID_BOX_WIDTH +
-    GRID_OFFSET;
+function drawGridPointer(evt = null) {
+  let mousePos;
+  if (evt) {
+    mousePos = calculateMousePos(evt, false);
+    mousePos.x =
+      Math.round((mousePos.x - GRID_OFFSET) / GRID_BOX_WIDTH) * GRID_BOX_WIDTH +
+      GRID_OFFSET;
+    mousePos.y =
+      Math.round((mousePos.y - GRID_OFFSET) / GRID_BOX_WIDTH) * GRID_BOX_WIDTH +
+      GRID_OFFSET;
 
-  mousePos = calculateNearestValidGridPoint(mousePos);
-
-  console.log(window.scrollY);
+    mousePos = calculateNearestValidGridPoint(mousePos);
+  } else {
+    // After the car animation, set the grid pointer to the center grid option (no need for real mouse pos)
+    mousePos = {
+      x: nextGridOptions[4].x,
+      y: nextGridOptions[4].y,
+    };
+  }
 
   gridPointer.style.top =
     mousePos.y +
@@ -378,6 +383,7 @@ function animateRacecars() {
       racecarStopsArray.push(aimPos);
       console.log('new racecarPos:', racecarPos);
       drawGridOptionPointers();
+      drawGridPointer();
       gameState = GAME_STATE_PICKING;
       return;
     }
@@ -411,8 +417,13 @@ function animateRacecars() {
 
     ctx.rotate(degrees_to_radians(-carVectAngle));
 
+    window.scrollTo(
+      racecarPos.x - window.innerWidth / 2,
+      racecarPos.y - window.innerHeight / 2
+    );
+
     frames++;
-  }, 1000 / 30);
+  }, 1000 / ANIMATION_FRAMES);
 }
 
 function animateExplosion() {

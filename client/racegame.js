@@ -120,16 +120,10 @@ window.onload = function () {
   function handleMouseDown(evt, touch = false) {
     switch (gameState) {
       case GAME_STATE_DRAWING:
-        if (!trackDrawingActive) {
-          if (!lastDrawingMousePos) {
-            firstDrawingMousePos = calculateMousePos(evt);
-            lastDrawingMousePos = firstDrawingMousePos;
-            ctx.beginPath();
-          }
-        } else {
-          initRacecars();
-          startRace();
-          // drawTrack();
+        if (!lastDrawingMousePos) {
+          firstDrawingMousePos = calculateMousePos(evt);
+          lastDrawingMousePos = firstDrawingMousePos;
+          ctx.beginPath();
         }
 
         trackDrawingActive = !trackDrawingActive;
@@ -176,9 +170,30 @@ window.onload = function () {
           JSON.stringify({ right: rightTrackPoints, left: leftTrackPoints })
         );
         break;
+      case 'd':
+        if (gameState === GAME_STATE_DRAWING) {
+          trackDrawingActive = false;
+          rightTrackPoints.pop();
+          middleTrackPoints.pop();
+          leftTrackPoints.pop();
+
+          if (rightTrackPoints.length > 0) {
+            lastDrawingRightPos = rightTrackPoints[rightTrackPoints.length - 1];
+            lastDrawingLeftPos = leftTrackPoints[leftTrackPoints.length - 1];
+            lastDrawingMousePos =
+              middleTrackPoints[middleTrackPoints.length - 1];
+          }
+
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          drawTrack(false);
+        }
+        break;
       case 'enter':
-        console.log('Drive Mode enabled!');
-        startRace();
+        if (gameState === GAME_STATE_DRAWING) {
+          console.log('Drive Mode enabled!');
+          initRacecars();
+          startRace();
+        }
         break;
       case 'backspace':
         localStorage.removeItem('track');
@@ -795,7 +810,7 @@ function calculateMousePosTouch(evt, onCanvas = true) {
   };
 }
 
-function drawTrack() {
+function drawTrack(drawEndLine = true) {
   ctx.beginPath();
   ctx.moveTo(rightTrackPoints[0].x, rightTrackPoints[0].y);
   for (let i = 1; i < rightTrackPoints.length; i++) {
@@ -814,16 +829,18 @@ function drawTrack() {
   ctx.stroke();
 
   // draw Endline
-  ctx.beginPath();
-  ctx.moveTo(
-    rightTrackPoints[rightTrackPoints.length - 1].x,
-    rightTrackPoints[rightTrackPoints.length - 1].y
-  );
-  ctx.lineTo(
-    leftTrackPoints[leftTrackPoints.length - 1].x,
-    leftTrackPoints[leftTrackPoints.length - 1].y
-  );
-  ctx.stroke();
+  if (drawEndLine) {
+    ctx.beginPath();
+    ctx.moveTo(
+      rightTrackPoints[rightTrackPoints.length - 1].x,
+      rightTrackPoints[rightTrackPoints.length - 1].y
+    );
+    ctx.lineTo(
+      leftTrackPoints[leftTrackPoints.length - 1].x,
+      leftTrackPoints[leftTrackPoints.length - 1].y
+    );
+    ctx.stroke();
+  }
 }
 
 function drawBoard() {

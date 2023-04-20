@@ -357,10 +357,6 @@ function getGridPointerPos() {
   };
 }
 
-function drawEverything() {
-  // initRacecars();
-}
-
 function animateRacecars() {
   let aimPos = getGridPointerPos();
 

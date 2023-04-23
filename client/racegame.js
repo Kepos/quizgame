@@ -25,7 +25,7 @@ const GRID_OFFSET = CANVAS_MARGIN + CANVAS_PADDING;
 
 var TRACK_WIDTH = 200;
 
-const DRAW_INTERVAL = 20;
+const DRAW_INTERVAL = 30;
 
 var NUM_PLAYERS = 4;
 var playerColors = ['#003a23', '#0e5fa9', '#ecc717', '#9a1a20'];
@@ -42,6 +42,9 @@ const RACECAR_HEIGHT = 26;
 // sprite / img Objects
 var racecarImgs = [];
 var explosion;
+
+// pause Racing Animation when explosion is shown;
+let animationIsPaused = false;
 
 var leftTrackPoints = [];
 var middleTrackPoints = [];
@@ -65,10 +68,14 @@ const GAME_STATE_PICKING = 1;
 const GAME_STATE_RACING = 2;
 var gameState = GAME_STATE_DRAWING;
 
+let infoPanelTempl;
+
 window.onload = function () {
   canvas = document.getElementById('canvas');
   ctx = canvas.getContext('2d');
   ctx.save();
+
+  infoPanelTempl = document.getElementById('info-panel-template');
 
   gridCanvas = document.getElementById('grid-canvas');
   gridCtx = gridCanvas.getContext('2d');
@@ -131,6 +138,18 @@ window.onload = function () {
         }
 
         trackDrawingActive = !trackDrawingActive;
+
+        if (trackDrawingActive) {
+          // const infoPanelEl = infoPanelTempl.cloneNode(true);
+          // infoPanelTempl.parentElement.appendChild(infoPanelEl);
+
+          infoPanelTempl.querySelector('.info-text').innerHTML =
+            'Klicken, um Zeichnen zu pausieren<br>Letzten Strich löschen mit D<br>Enter, um Rennen zu starten';
+        } else {
+          infoPanelTempl.querySelector('.info-text').innerHTML =
+            'Klicken, um mit Zeichnen fortzufahren<br>Letzten Strich löschen mit D<br>Enter, um Rennen zu starten';
+        }
+
         break;
       case GAME_STATE_PICKING:
         racecarsStopsArray[currentPlayer].push(getGridPointerPos());
@@ -202,10 +221,14 @@ window.onload = function () {
 
           ctx.clearRect(0, 0, canvas.width, canvas.height);
           drawTrack(false);
+
+          infoPanelTempl.querySelector('.info-text').innerHTML =
+            'Klicken, um mit Zeichnen fortzufahren<br>Letzten Strich löschen mit D<br>Enter, um Rennen zu starten';
         }
         break;
       case 'enter':
         if (gameState === GAME_STATE_DRAWING) {
+          trackDrawingActive = false;
           console.log('Drive Mode enabled!');
           initRacecars();
           startRace();

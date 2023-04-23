@@ -5,51 +5,59 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Race Game</title>
-    <script type="text/javascript" src="racegame.js"></script>
+    <script type="module" src="racegame.js"></script>
     <script type="text/javascript" src="client.js"></script>
   </head>
   <body>
     <div class="game-container">
+      <div class="info-panel">
+        <div class="info-panel-element" id="info-panel-template">
+          <span class="info-icon">i</span>
+          <span class="info-text"
+            >Klicken, um mit dem Zeichnen zu beginnen.</span
+          >
+        </div>
+      </div>
       <div class="game-settings-container">
         <div class="game-settings">
           <h1>// OLR</h1>
 
           <div class="settings-input-container">
             <h2>Dein Name</h2>
-            <input type="text" class="name-input" />
+            <input type="text" class="name-input" onchange="onNameChanged()" />
 
             <h2>Dein Fahrzeug</h2>
             <div>
-              <div class="racecar-card-container" onclick="onSelectRacecar(0)">
-                <div class="racecar-card">
+              <div class="settings-card-container" onclick="onSelectRacecar(0)">
+                <div class="settings-card racecar-card">
                   <img src="assets/racecar-1.png" width="40" />
                 </div>
-                <span>BRG</span>
+                <span>Infinity<br />Green</span>
               </div>
-              <div class="racecar-card-container" onclick="onSelectRacecar(1)">
-                <div class="racecar-card">
+              <div class="settings-card-container" onclick="onSelectRacecar(1)">
+                <div class="settings-card racecar-card">
                   <img src="assets/racecar-2.png" width="40" />
                 </div>
-                <span>IPB</span>
+                <span>Majesty<br />Blue</span>
               </div>
-              <div class="racecar-card-container" onclick="onSelectRacecar(2)">
-                <div class="racecar-card">
+              <div class="settings-card-container" onclick="onSelectRacecar(2)">
+                <div class="settings-card racecar-card">
                   <img src="assets/racecar-3.png" width="40" />
                 </div>
-                <span>LNY</span>
+                <span>Curiosity<br />Yellow</span>
               </div>
-              <div class="racecar-card-container" onclick="onSelectRacecar(3)">
-                <div class="racecar-card">
+              <div class="settings-card-container" onclick="onSelectRacecar(3)">
+                <div class="settings-card racecar-card">
                   <img src="assets/racecar-4.png" width="40" />
                 </div>
-                <span>CRR</span>
+                <span>Simply<br />Red</span>
               </div>
             </div>
 
             <h2>Rennstrecke auswählen</h2>
             <div>
-              <div class="racecar-card-container">
-                <div class="racecar-card">
+              <div class="settings-card-container" onclick="onSelectTrack(0)">
+                <div class="settings-card track-card">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="40"
@@ -67,10 +75,10 @@
                     />
                   </svg>
                 </div>
-                <span>BRG</span>
+                <span>NBG</span>
               </div>
-              <div class="racecar-card-container">
-                <div class="racecar-card">
+              <div class="settings-card-container" onclick="onSelectTrack(1)">
+                <div class="settings-card track-card">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="25.359"
@@ -88,10 +96,10 @@
                     />
                   </svg>
                 </div>
-                <span>IPB</span>
+                <span>Raincastle</span>
               </div>
-              <div class="racecar-card-container">
-                <div class="racecar-card">
+              <div class="settings-card-container" onclick="onSelectTrack(2)">
+                <div class="settings-card track-card">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="22.77"
@@ -109,10 +117,10 @@
                     />
                   </svg>
                 </div>
-                <span>LNY</span>
+                <span>Monaco</span>
               </div>
-              <div class="racecar-card-container">
-                <div class="racecar-card">
+              <div class="settings-card-container" onclick="onSelectTrack(3)">
+                <div class="settings-card track-card">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="35.202"
@@ -136,7 +144,7 @@
                     />
                   </svg>
                 </div>
-                <span>CRR</span>
+                <span>Custom</span>
               </div>
             </div>
 
@@ -200,6 +208,32 @@
       height: 100vh;
       position: relative;
     }
+
+    .info-panel {
+      position: fixed;
+      bottom: 15px;
+      right: 15px;
+      z-index: 10;
+    }
+
+    .info-panel-element {
+      padding: 20px 40px;
+      background-color: #e0e0e0;
+      border-radius: 8px;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .info-icon {
+      background-color: var(--brg);
+      color: white;
+      padding: 5px 12px;
+      border-radius: 40px;
+      margin-right: 20px;
+    }
+
     .game-settings-container {
       background-color: var(--brg);
       width: 100%;
@@ -258,21 +292,21 @@
       color: #777;
     }
 
-    .racecar-card-container {
+    .settings-card-container {
       text-align: center;
       display: inline-block;
       margin-right: 10px;
       cursor: pointer;
     }
 
-    .racecar-card-container span {
+    .settings-card-container span {
       font-size: 12px;
       margin-top: 10px;
       display: inline-block;
       max-width: 100%;
     }
 
-    .racecar-card {
+    .settings-card {
       background-color: white;
       border-radius: 5px;
       display: flex;
@@ -293,6 +327,10 @@
       align-self: center;
       margin-top: 30px;
       font-size: 17px;
+    }
+
+    .play-button:disabled {
+      opacity: 0.3;
     }
 
     .canvas-container {
@@ -326,6 +364,7 @@
       width: 10px;
       height: 10px;
       background-color: gray;
+      border: 1px solid transparent;
       top: -50px;
       left: -50px;
       border-radius: 20px;

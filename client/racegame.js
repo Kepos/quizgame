@@ -25,7 +25,7 @@ const GRID_OFFSET = CANVAS_MARGIN + CANVAS_PADDING;
 
 var TRACK_WIDTH = 200;
 
-const DRAW_INTERVAL = 30;
+const DRAW_INTERVAL = 10;
 
 var NUM_PLAYERS = 4;
 var playerColors = ['#003a23', '#0e5fa9', '#ecc717', '#9a1a20'];
@@ -446,7 +446,8 @@ function animateRacecars() {
   }
 
   let frames = 0;
-  let animInterval = setInterval(() => {
+  let animInterval = setInterval(async () => {
+    if (animationIsPaused) return;
     if (frames === ANIMATION_FRAMES) {
       clearInterval(animInterval);
       drawGridOptionPointers();
@@ -462,7 +463,12 @@ function animateRacecars() {
     for (let i = 0; i < NUM_PLAYERS; i++) {
       if (checkForBoundaryCrash(racecarsPos[i], carVects[i])) {
         //clearInterval(animInterval);
-        //animateExplosion();
+        animationIsPaused = true;
+        await animateExplosion(i);
+        racecarsPos[i] = {
+          x: -500,
+          y: -500,
+        };
         // return;
       }
 
@@ -503,60 +509,107 @@ function animateRacecars() {
   }, 1000 / ANIMATION_FRAMES);
 }
 
-function animateExplosion() {
-  console.log('animateEXPLOSION!!');
-  let spriteRows = 2;
-  let spriteCols = 3;
+function drawRacecars(skipIndex = -1) {
+  let carVects = [];
+  let carVectAngles = [];
 
-  let frameWidth = explosion.width / spriteCols;
-  let frameHeight = explosion.height / spriteRows;
+  for (let i = 0; i < NUM_PLAYERS; i++) {
+    //let aimPos = racecarsStopsArray[i][racecarsStopsArray[i].length - 1];
+    let lastPos = racecarsStopsArray[i][racecarsStopsArray[i].length - 2];
+    let aimPos = racecarsPos[i];
+    let carVect = calculateDirectionVector(lastPos, aimPos);
+    let carVectAngle = calculateLineAngle(0, 0, carVect.x, carVect.y);
 
-  const ANIMATION_FRAMES = 5;
-  let currentFrame = 0;
+    carVect.x = carVect.x;
+    carVect.y = carVect.y;
 
-  updateExplosion();
-  let animInterval = setInterval(() => {
-    updateExplosion();
-  }, 1000 / 12);
+    carVects.push(carVect);
+    carVectAngles.push(carVectAngle);
+  }
 
-  function updateExplosion() {
-    console.log('EXPLO INTERVAL');
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
 
-    drawTrack();
+  for (let i = 0; i < NUM_PLAYERS; i++) {
+    if (skipIndex === i) continue;
+    ctx.setTransform(1, 0, 0, 1, racecarsPos[i].x, racecarsPos[i].y);
 
-    if (currentFrame === ANIMATION_FRAMES) {
-      clearInterval(animInterval);
-      return;
-    }
-
-    let column = currentFrame % spriteCols;
-    let row = Math.floor(currentFrame / spriteCols);
-
-    ctx.drawImage(
-      explosion,
-      column * frameWidth,
-      row * frameHeight,
-      frameWidth,
-      frameHeight,
-      racecarsPos[0].x - frameWidth / 2,
-      racecarsPos[0].y - frameHeight / 2,
-      frameWidth,
-      frameHeight
-    );
+    ctx.rotate(degrees_to_radians(carVectAngles[i]));
 
     // half of the image to the left and top
-    // ctx.drawImage(
-    //   racecarImgs[0],
-    //   -RACECAR_WIDTH / 2,
-    //   -RACECAR_HEIGHT / 2,
-    //   RACECAR_WIDTH,
-    //   RACECAR_HEIGHT
-    // );
+    ctx.drawImage(
+      racecarImgs[i],
+      -RACECAR_WIDTH / 2,
+      -RACECAR_HEIGHT / 2,
+      RACECAR_WIDTH,
+      RACECAR_HEIGHT
+    );
 
-    currentFrame++;
+    ctx.rotate(degrees_to_radians(-carVectAngles[i]));
   }
+}
+
+function animateExplosion(racecarIndex) {
+  return new Promise((resolve) => {
+    console.log('animateEXPLOSION!!');
+    let spriteRows = 2;
+    let spriteCols = 3;
+
+    let frameWidth = explosion.width / spriteCols;
+    let frameHeight = explosion.height / spriteRows;
+
+    const ANIMATION_FRAMES = 5;
+    let currentFrame = 0;
+
+    updateExplosion();
+    let animInterval = setInterval(() => {
+      updateExplosion();
+    }, 1000 / 12);
+
+    function updateExplosion() {
+      console.log('EXPLO INTERVAL');
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      drawTrack();
+
+      drawRacecars(racecarIndex);
+
+      if (currentFrame === ANIMATION_FRAMES) {
+        clearInterval(animInterval);
+        animationIsPaused = false;
+        resolve();
+        return;
+      }
+
+      let column = currentFrame % spriteCols;
+      let row = Math.floor(currentFrame / spriteCols);
+
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+      ctx.drawImage(
+        explosion,
+        column * frameWidth,
+        row * frameHeight,
+        frameWidth,
+        frameHeight,
+        racecarsPos[racecarIndex].x - frameWidth / 2,
+        racecarsPos[racecarIndex].y - frameHeight / 2,
+        frameWidth,
+        frameHeight
+      );
+
+      // half of the image to the left and top
+      // ctx.drawImage(
+      //   racecarImgs[0],
+      //   -RACECAR_WIDTH / 2,
+      //   -RACECAR_HEIGHT / 2,
+      //   RACECAR_WIDTH,
+      //   RACECAR_HEIGHT
+      // );
+
+      currentFrame++;
+    }
+  });
 }
 
 function checkForBoundaryCrash(currentPos, dirVect) {
@@ -912,7 +965,10 @@ function drawRacecarsHistory() {
     for (let j = 1; j < racecarsStopsArray[i].length - 1; j++) {
       ctx.lineTo(racecarsStopsArray[i][j].x, racecarsStopsArray[i][j].y);
     }
-    ctx.lineTo(racecarsPos[i].x, racecarsPos[i].y);
+    // Do not draw line to nirvana
+    if (racecarsPos[i].x > 0) {
+      ctx.lineTo(racecarsPos[i].x, racecarsPos[i].y);
+    }
     ctx.strokeStyle = playerColors[i];
     ctx.stroke();
   }

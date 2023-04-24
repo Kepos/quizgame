@@ -283,6 +283,20 @@ function endGame() {
   replay();
 }
 
+function setWinner(playerIndex) {
+  if (!winners.includes(playerIndex)) {
+    winners.push(playerIndex);
+  }
+
+  let winnersText = '';
+  for (let i = 0; i < winners.length; i++) {
+    winnersText += `<b>${i + 1}. Platz:<b> Spieler ${winners[i] + 1}<br>`;
+  }
+
+  infoPanelTempl.querySelector('.info-text').innerHTML = winnersText;
+  infoPanelTempl.style.display = 'flex';
+}
+
 // function isMouseOnGridOptions(mousePos) {
 //   mousePos.x = Math.round(mousePos.x);
 //   mousePos.y = Math.round(mousePos.y);
@@ -504,17 +518,30 @@ function animateRacecars() {
     for (let i = 0; i < NUM_PLAYERS; i++) {
       // skip this if racecar is dead
       if (racecarsPos[i].x < 0) continue;
+      switch (checkForBoundaryCrash(racecarsPos[i], carVects[i])) {
+        case 1:
+          break;
+        case 2:
+          setWinner(i);
+          break;
+        case 3:
+        case 4:
+          animationIsPaused = true;
+          await animateExplosion(i);
+          racecarsStopsArray[i][racecarsStopsArray[i].length - 1] =
+            racecarsPos[i];
+          racecarsPos[i] = {
+            x: -500,
+            y: -500,
+          };
+          continue;
+          break;
+        default:
+          break;
+      }
+
       if (checkForBoundaryCrash(racecarsPos[i], carVects[i])) {
         //clearInterval(animInterval);
-        animationIsPaused = true;
-        await animateExplosion(i);
-        racecarsStopsArray[i][racecarsStopsArray[i].length - 1] =
-          racecarsPos[i];
-        racecarsPos[i] = {
-          x: -500,
-          y: -500,
-        };
-        continue;
       }
 
       racecarsPos[i].x += carVects[i].x;
@@ -783,7 +810,7 @@ function checkForBoundaryCrash(currentPos, dirVect) {
     )
   ) {
     console.log('START LINE!?!');
-    return true;
+    return 1;
   } else if (
     intersects(
       currentPos.x,
@@ -797,7 +824,7 @@ function checkForBoundaryCrash(currentPos, dirVect) {
     )
   ) {
     console.log('FINISH LINE!!!!');
-    return true;
+    return 2;
   }
 
   // go through every rightTrack and lefTrack vector to check if car crashes
@@ -819,7 +846,7 @@ function checkForBoundaryCrash(currentPos, dirVect) {
       )
     ) {
       console.log('CRASH RIGHT???');
-      return true;
+      return 3;
     } else if (
       intersects(
         currentPos.x,
@@ -833,11 +860,11 @@ function checkForBoundaryCrash(currentPos, dirVect) {
       )
     ) {
       console.log('CRASH LEFT!!!');
-      return true;
+      return 4;
     }
   }
 
-  return false;
+  return -1;
 }
 
 function initRacecars() {

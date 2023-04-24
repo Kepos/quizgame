@@ -10,6 +10,15 @@ const onChatSubmitted = (sock) => (e) => {
   e.preventDefault();
 };
 
+const onPlayButtonClicked = (sock) => () => {
+  let gameSettings = document.getElementsByClassName(
+    'game-settings-container'
+  )[0];
+  io.gameSettings.style.display = 'none';
+
+  sock.emit('message', 'lets play!');
+};
+
 (() => {
   const sock = io();
 
@@ -77,9 +86,9 @@ function checkForCompleteData() {
   }
 }
 
-function onPlayButtonClicked() {
+function onPlayyyyButtonClicked() {
   let gameSettings = document.getElementsByClassName(
     'game-settings-container'
   )[0];
-  gameSettings.style.display = 'none';
+  io.gameSettings.style.display = 'none';
 }

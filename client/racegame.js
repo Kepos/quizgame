@@ -27,7 +27,7 @@ var TRACK_WIDTH = 200;
 
 const DRAW_INTERVAL = 10;
 
-var NUM_PLAYERS = 2;
+var NUM_PLAYERS = 4;
 var playerColors = ['#003a23', '#0e5fa9', '#ecc717', '#9a1a20'];
 // player that currently is picking next stop
 var currentPlayer = 0;
@@ -488,7 +488,6 @@ function animateRacecars() {
       gameState = GAME_STATE_PICKING;
       currentPlayer = -1;
       currentPlayer = getNextAvailablePlayer()[0];
-      console.log('Next ROund:', currentPlayer);
       if (currentPlayer === -1) {
         // game Over for all
         endGame();
@@ -559,6 +558,7 @@ function animateRacecars() {
   }, 1000 / ANIMATION_FRAMES);
 }
 
+// needs to be refactored: use animateRacecars instead of duplicate code!!
 function replay() {
   let replayFrames = 0;
   for (let i = 0; i < NUM_PLAYERS; i++) {
@@ -571,7 +571,7 @@ function replay() {
 
   let f = 1;
 
-  let replayInterval = setInterval(async () => {
+  let replayInterval = setInterval(() => {
     let carVects = [];
     let carVectAngles = [];
 
@@ -587,18 +587,18 @@ function replay() {
       carVect.x = carVect.x / ANIMATION_FRAMES;
       carVect.y = carVect.y / ANIMATION_FRAMES;
 
-      carVects.push(carVect);
-      carVectAngles.push(carVectAngle);
+      carVects[i] = carVect;
+      carVectAngles[i] = carVectAngle;
     }
 
     let frames = 0;
-    let animInterval = setInterval(async () => {
+    let animInterval = setInterval(() => {
       if (frames === ANIMATION_FRAMES) {
         clearInterval(animInterval);
       }
 
       drawTrack();
-      // drawRacecarsHistory(f);
+      drawRacecarsHistory(f);
 
       for (let i = 0; i < NUM_PLAYERS; i++) {
         // skip this if racecar is dead
@@ -670,8 +670,8 @@ function drawRacecars(skipIndex = -1) {
     carVect.x = carVect.x;
     carVect.y = carVect.y;
 
-    carVects.push(carVect);
-    carVectAngles.push(carVectAngle);
+    carVects[i] = carVect;
+    carVectAngles[i] = carVectAngle;
   }
 
   ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -762,10 +762,12 @@ function checkForBoundaryCrash(currentPos, dirVect) {
     y: currentPos.y + dirVect.y,
   };
 
+  // first right track point ...
   let frtp = rightTrackPoints[0];
   let fltp = leftTrackPoints[0];
   let lrtp = rightTrackPoints[rightTrackPoints.length - 1];
   let lltp = leftTrackPoints[leftTrackPoints.length - 1];
+  // ... last left track point
 
   // check for start line / end line intersection
   if (

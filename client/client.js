@@ -103,8 +103,8 @@ const onPlayButtonClicked = (sock) => () => {
     sock.emit('nextStop', nextStop);
   };
 
-  uploadDeath = () => {
-    sock.emit('death');
+  uploadDeath = (index) => {
+    sock.emit('death', index);
   };
 
   restartGame = () => {

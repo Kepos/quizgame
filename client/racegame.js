@@ -225,9 +225,10 @@ window.onload = function () {
   }
 
   window.addEventListener('keydown', (evt) => {
-    if (gameState === GAME_STATE_SETTINGS) return;
     let key = evt.key.toLowerCase();
     console.log('KEY PRESSED: ', key);
+    // allow game restart from settings
+    if (gameState === GAME_STATE_SETTINGS && key !== '*') return;
     switch (key) {
       case 'w':
         TRACK_WIDTH += 10;
@@ -401,7 +402,7 @@ function setWinner(playerIndex) {
   for (let i = 0; i < winners.length; i++) {
     winnersText += `<b>${
       i + 1
-    }. Platz:<b style="border-bottom: 3px solid style="border-bottom: 3px solid ${
+    }. Platz: <b style="border-bottom: 3px solid style="border-bottom: 3px solid ${
       carColors[players[winners[i]].car]
     }">${players[winners[i]].name}<br>`;
   }
@@ -652,6 +653,20 @@ function animateRacecars() {
         // set the players state of the winners to 0
         playersState[winners[i]] = 0;
       }
+
+      for (let i = 0; i < playersState.length; i++) {
+        // set the players state of the winners to 0
+        if (playersState[i] === 0) {
+          uploadDeath(i);
+        }
+      }
+
+      /*
+      // because of possible lagging reasons
+      if (playersState[currentPlayer] === 0) {
+        uploadDeath();
+      }
+      */
 
       if (!checkForGameEnd()) {
         // next Round

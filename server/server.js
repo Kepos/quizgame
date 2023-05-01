@@ -91,8 +91,10 @@ io.on('connection', (sock) => {
     }
   });
 
-  sock.on('death', () => {
-    deadPlayers.push(playerID);
+  sock.on('death', (index) => {
+    if (!deadPlayers.includes(players[index])) {
+      deadPlayers.push(players[index]);
+    }
   });
 
   sock.on('disconnect', (reason) => {
@@ -123,6 +125,14 @@ io.on('connection', (sock) => {
     if (allPlayersSelectedNextMove()) {
       io.emit('playersMoves', playersMoves);
       playersMoves = [];
+    }
+
+    if (players.length === 0) {
+      admin = null;
+      players = [];
+      deadPlayers = [];
+      playersMoves = [];
+      acceptNewPlayers = true;
     }
   });
 

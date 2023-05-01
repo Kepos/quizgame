@@ -9,6 +9,7 @@ let isAdmin = false;
 let uploadTrack;
 let uploadNextStop;
 let uploadDeath;
+let restartGame;
 
 const onChatSubmitted = (sock) => (e) => {
   e.preventDefault();
@@ -39,6 +40,12 @@ const onPlayButtonClicked = (sock) => () => {
     console.log('You are the admin!');
     isAdmin = true;
     document.getElementById('select-racetrack').style.display = 'inline';
+  });
+
+  sock.on('nosignup', () => {
+    console.log('no signup!');
+    let sic = document.getElementsByClassName('settings-input-container')[0];
+    sic.innerHTML = 'Spiel ist im Gange. Gerade kein Zutritt möglich';
   });
 
   sock.on('playerindex', (index) => {
@@ -78,6 +85,10 @@ const onPlayButtonClicked = (sock) => () => {
     drive();
   });
 
+  sock.on('restart', () => {
+    location.reload();
+  });
+
   console.log('welcome');
 
   document
@@ -94,6 +105,10 @@ const onPlayButtonClicked = (sock) => () => {
 
   uploadDeath = () => {
     sock.emit('death');
+  };
+
+  restartGame = () => {
+    sock.emit('restart');
   };
 })();
 

@@ -29,6 +29,10 @@ function getNextFreeIndex() {
 
 function allPlayersSelectedNextMove() {
   // check if all the not-undefined values from playersMoves add up to alive players Num
+  console.log('all playes selected?');
+  console.log('playersmoveslength', playersMoves.filter((v) => v).length);
+  console.log('players', players.length);
+  console.log('dead players', deadPlayers.length);
   return (
     playersMoves.filter((v) => v).length >= players.length - deadPlayers.length
   );
@@ -47,6 +51,10 @@ io.on('connection', (sock) => {
   if (!admin) {
     admin = playerID;
     sock.emit('admin');
+  }
+
+  if (!acceptNewPlayers) {
+    sock.emit('nosignup');
   }
 
   sock.on('message', (text) => console.log(`got text: ${text}`));
@@ -90,12 +98,20 @@ io.on('connection', (sock) => {
   sock.on('disconnect', (reason) => {
     console.log('player disconnected: ', playerID);
     var index = players.indexOf(playerID);
+    /*
+    var index = players.indexOf(playerID);
     if (index !== -1) {
       players.splice(index, 1);
     }
+    
     var deadindex = deadPlayers.indexOf(playerID);
     if (deadindex !== -1) {
       deadPlayers.splice(deadindex, 1);
+    }
+    */
+    // check if players array is not empty
+    if (players.includes(playerID) && !deadPlayers.includes(playerID)) {
+      deadPlayers.push(playerID);
     }
 
     if (admin === playerID) {
@@ -108,6 +124,16 @@ io.on('connection', (sock) => {
       io.emit('playersMoves', playersMoves);
       playersMoves = [];
     }
+  });
+
+  sock.on('restart', () => {
+    admin = null;
+    players = [];
+    deadPlayers = [];
+    playersMoves = [];
+    acceptNewPlayers = true;
+
+    io.emit('restart');
   });
 });
 

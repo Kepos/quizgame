@@ -14,6 +14,13 @@
           <span class="info-icon">i</span>
           <span class="info-text">Winners:</span>
         </div>
+        <div class="info-panel-element" id="info-panel-game-end">
+          <span class="info-icon">i</span>
+          <span class="info-text"
+            >Spiel beendet!<br />'r' drücken für replay<br />* drücken für
+            restart</span
+          >
+        </div>
         <div class="info-panel-element" id="info-panel-template">
           <span class="info-icon">i</span>
           <span class="info-text"
@@ -23,7 +30,7 @@
       </div>
       <div class="game-settings-container">
         <div class="game-settings">
-          <h1>// OLR</h1>
+          <h1>// OloRace!</h1>
 
           <div class="settings-input-container">
             <h2>Dein Name</h2>
@@ -55,13 +62,13 @@
                 </div>
                 <span>Simply<br />Red</span>
               </div>
-              <div class="settings-card-container" onclick="onSelectRacecar(5)">
+              <div class="settings-card-container" onclick="onSelectRacecar(4)">
                 <div class="settings-card racecar-card">
                   <img src="assets/racecar-4.png" width="40" />
                 </div>
                 <span>Pathetic<br />Pink</span>
               </div>
-              <div class="settings-card-container" onclick="onSelectRacecar(6)">
+              <div class="settings-card-container" onclick="onSelectRacecar(5)">
                 <div class="settings-card racecar-card">
                   <img src="assets/racecar-5.png" width="40" />
                 </div>
@@ -73,7 +80,7 @@
                 </div>
                 <span>Audacity<br />Black</span>
               </div>
-              <div class="settings-card-container" onclick="onSelectRacecar(6)">
+              <div class="settings-card-container" onclick="onSelectRacecar(7)">
                 <div class="settings-card racecar-card">
                   <img src="assets/racecar-7.png" width="40" />
                 </div>
@@ -84,6 +91,7 @@
             <div id="select-racetrack">
               <h2>Rennstrecke auswählen</h2>
               <div>
+                <!--
                 <div class="settings-card-container" onclick="onSelectTrack(0)">
                   <div class="settings-card track-card">
                     <svg
@@ -147,7 +155,8 @@
                   </div>
                   <span>Monaco</span>
                 </div>
-                <div class="settings-card-container" onclick="onSelectTrack(3)">
+              -->
+                <div class="settings-card-container" onclick="onSelectTrack(0)">
                   <div class="settings-card track-card">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -276,6 +285,10 @@
       padding: 5px 12px;
       border-radius: 40px;
       margin-right: 20px;
+    }
+
+    #info-panel-game-end {
+      display: none;
     }
 
     #winners-panel {

@@ -272,14 +272,10 @@ window.onload = function () {
             middleTrackPoints.pop();
             leftTrackPoints.pop();
           }
-          if (rightTrackPoints.length > 1) {
-          }
+
           lastDrawingRightPos = rightTrackPoints[rightTrackPoints.length - 1];
           lastDrawingLeftPos = leftTrackPoints[leftTrackPoints.length - 1];
           lastDrawingMousePos = middleTrackPoints[middleTrackPoints.length - 1];
-
-          if (rightTrackPoints.length > 0) {
-          }
 
           drawTrack(false);
 
@@ -308,8 +304,14 @@ window.onload = function () {
         localStorage.removeItem('track');
         break;
       case 'r':
-        gameState = GAME_STATE_END;
-        replay();
+        if (gameState === GAME_STATE_END) {
+          replay();
+        }
+        break;
+      case '*': {
+        restartGame();
+        break;
+      }
       default:
         break;
     }
@@ -378,6 +380,18 @@ function endGame() {
   replay();
 }
 
+function checkForGameEnd() {
+  // check if there are still 'alive' players
+  if (playersState.indexOf(1) >= 0) {
+    return false;
+  }
+
+  gameState = GAME_STATE_END;
+  let gameOverPanel = document.getElementById('info-panel-game-end');
+  gameOverPanel.style.display = 'flex';
+  return true;
+}
+
 function setWinner(playerIndex) {
   if (!winners.includes(playerIndex)) {
     winners.push(playerIndex);
@@ -385,7 +399,11 @@ function setWinner(playerIndex) {
 
   let winnersText = '';
   for (let i = 0; i < winners.length; i++) {
-    winnersText += `<b>${i + 1}. Platz:<b> Spieler ${winners[i] + 1}<br>`;
+    winnersText += `<b>${
+      i + 1
+    }. Platz:<b style="border-bottom: 3px solid style="border-bottom: 3px solid ${
+      carColors[players[winners[i]].car]
+    }">${players[winners[i]].name}<br>`;
   }
 
   winnersPanel.querySelector('.info-text').innerHTML = winnersText;
@@ -421,7 +439,9 @@ function addPlayersPanelTag(index) {
 
 function crossOutPlayersPanelTag(index) {
   let tag = document.getElementById(`player-tag-${index}`);
-  tag.style.textDecoration = 'line-through';
+  if (tag) {
+    tag.style.textDecoration = 'line-through';
+  }
 }
 
 // function isMouseOnGridOptions(mousePos) {
@@ -628,8 +648,16 @@ function animateRacecars() {
     if (frames === ANIMATION_FRAMES) {
       clearInterval(animInterval);
 
-      // next Round
-      nextPickingRound();
+      for (let i = 0; i < winners.length; i++) {
+        // set the players state of the winners to 0
+        playersState[winners[i]] = 0;
+      }
+
+      if (!checkForGameEnd()) {
+        // next Round
+        nextPickingRound();
+      }
+
       /*
 
       currentPlayer = -1;
@@ -656,6 +684,9 @@ function animateRacecars() {
           break;
         case 2:
           setWinner(i);
+          if (i === currentPlayer) {
+            uploadDeath();
+          }
           break;
         case 3:
         case 4:

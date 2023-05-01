@@ -4,7 +4,11 @@ let selectedTrack = '';
 let cars = ['green', 'blue', 'yellow', 'red'];
 let tracks = ['NBG', 'Raincastle', 'Monaco', 'Custom'];
 
-const log = (text) => {};
+let isAdmin = false;
+
+let uploadTrack;
+let uploadNextStop;
+let uploadDeath;
 
 const onChatSubmitted = (sock) => (e) => {
   e.preventDefault();
@@ -17,9 +21,9 @@ const onPlayButtonClicked = (sock) => () => {
   gameSettings.style.display = 'none';
 
   // sock.emit('message', 'lets play!');
-  sock.emit('signup', { name: enteredPlayerName, color: selectedCarIndex });
+  sock.emit('signup', { name: enteredPlayerName, car: selectedCarIndex });
 
-  initGame();
+  startDrawing();
 };
 
 (() => {
@@ -33,7 +37,45 @@ const onPlayButtonClicked = (sock) => () => {
 
   sock.on('admin', () => {
     console.log('You are the admin!');
+    isAdmin = true;
     document.getElementById('select-racetrack').style.display = 'inline';
+  });
+
+  sock.on('playerindex', (index) => {
+    currentPlayer = index;
+  });
+
+  sock.on('newPlayer', (player) => {
+    popup(`New Player: ${player.name}`);
+    players[player.index] = player;
+    addPlayersPanelTag(player.index);
+  });
+
+  sock.on('playerLeft', (index) => {
+    playersState[index] = 0;
+  });
+
+  sock.on('track', (info) => {
+    console.log('Track received!');
+
+    const { track, players } = info;
+
+    rightTrackPoints = track.rightTrackPoints;
+    leftTrackPoints = track.leftTrackPoints;
+    firstDrawingRightPos = rightTrackPoints[0];
+    firstDrawingLeftPos = leftTrackPoints[0];
+
+    NUM_PLAYERS = players.length;
+    playersState = players;
+
+    initRace();
+  });
+
+  sock.on('playersMoves', (playersMoves) => {
+    for (let i = 0; i < NUM_PLAYERS; i++) {
+      racecarsStopsArray[i].push(playersMoves[i]);
+    }
+    drive();
   });
 
   console.log('welcome');
@@ -41,6 +83,18 @@ const onPlayButtonClicked = (sock) => () => {
   document
     .getElementsByClassName('play-button')[0]
     .addEventListener('click', onPlayButtonClicked(sock));
+
+  uploadTrack = (track) => {
+    sock.emit('track', track);
+  };
+
+  uploadNextStop = (nextStop) => {
+    sock.emit('nextStop', nextStop);
+  };
+
+  uploadDeath = () => {
+    sock.emit('death');
+  };
 })();
 
 function onNameChanged() {
@@ -87,20 +141,18 @@ function checkForCompleteData() {
   let playButton = document.getElementsByClassName('play-button')[0];
 
   if (
-    selectedCarIndex &&
-    selectedTrack &&
-    enteredPlayerName &&
-    enteredPlayerName.length > 1
+    (isAdmin &&
+      typeof selectedCarIndex !== 'undefined' &&
+      selectedTrack &&
+      enteredPlayerName &&
+      enteredPlayerName.length > 1) ||
+    (!isAdmin &&
+      typeof selectedCarIndex !== 'undefined' &&
+      enteredPlayerName &&
+      enteredPlayerName.length > 1)
   ) {
     playButton.disabled = false;
   } else {
     playButton.disabled = true;
   }
-}
-
-function onPlayyyyButtonClicked() {
-  let gameSettings = document.getElementsByClassName(
-    'game-settings-container'
-  )[0];
-  io.gameSettings.style.display = 'none';
 }

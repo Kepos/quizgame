@@ -15,7 +15,7 @@ const createGame = () => {
   };
 
   const addMove = (index, x, y) => {
-    playersMoves[index].push({ x: x, y: y });
+    // playersMoves[index].push({ x: x, y: y });
   };
 
   const getMoves = () => playersMoves;

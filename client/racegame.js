@@ -28,11 +28,26 @@ var TRACK_WIDTH = 200;
 const DRAW_INTERVAL = 10;
 
 var NUM_PLAYERS = 4;
+var playersState = [];
 var playerColors = ['#003a23', '#0e5fa9', '#ecc717', '#9a1a20'];
+// green, blue, yellow, red, pink, gray, black, brg
+const carColors = [
+  '#003a23',
+  '#0e5fa9',
+  '#ecc717',
+  '#9a1a20',
+  '#df30b0',
+  '#8c8c8c',
+  '#212121',
+  '#003a23',
+];
 // player that currently is picking next stop
-var currentPlayer = 0;
+var currentPlayer = -1;
 var racecarsPos = [];
 var racecarsStopsArray = [];
+
+// array of players with names & car-Indexes
+var players = [];
 
 var winners = [];
 
@@ -68,11 +83,14 @@ let lastMouseMoveEvt;
 const GAME_STATE_SETTINGS = 0;
 const GAME_STATE_DRAWING = 1;
 const GAME_STATE_PICKING = 2;
-const GAME_STATE_RACING = 3;
-const GAME_STATE_END = 4;
+const GAME_STATE_WAITING = 3;
+const GAME_STATE_RACING = 4;
+const GAME_STATE_END = 5;
 var gameState = GAME_STATE_SETTINGS;
 
 let infoPanelTempl;
+let winnersPanel;
+let playersPanel;
 
 window.onload = function () {
   canvas = document.getElementById('canvas');
@@ -80,6 +98,8 @@ window.onload = function () {
   ctx.save();
 
   infoPanelTempl = document.getElementById('info-panel-template');
+  winnersPanel = document.getElementById('winners-panel');
+  playersPanel = document.getElementById('players-panel');
 
   gridCanvas = document.getElementById('grid-canvas');
   gridCtx = gridCanvas.getContext('2d');
@@ -103,18 +123,16 @@ window.onload = function () {
   ctx.lineJoin = 'bevel';
 
   let storedTrackObj = localStorage.getItem('track');
-  if (storedTrackObj) {
+  if (false && storedTrackObj) {
     storedTrackObj = JSON.parse(storedTrackObj);
     rightTrackPoints = storedTrackObj.right;
     leftTrackPoints = storedTrackObj.left;
     firstDrawingRightPos = rightTrackPoints[0];
     firstDrawingLeftPos = leftTrackPoints[0];
 
-    infoPanelTempl.style.display = 'none';
+    hideInfo();
 
-    drawTrack();
-    initRacecars();
-    startRace();
+    initRace();
   }
 
   // document.body.style.zoom = '50%';
@@ -138,6 +156,7 @@ window.onload = function () {
   function handleMouseDown(evt, touch = false) {
     switch (gameState) {
       case GAME_STATE_DRAWING:
+        if (!isAdmin) return;
         if (!lastDrawingMousePos) {
           firstDrawingMousePos = calculateMousePos(evt);
           lastDrawingMousePos = firstDrawingMousePos;
@@ -147,18 +166,25 @@ window.onload = function () {
         trackDrawingActive = !trackDrawingActive;
 
         if (trackDrawingActive) {
-          // const infoPanelEl = infoPanelTempl.cloneNode(true);
-          // infoPanelTempl.parentElement.appendChild(infoPanelEl);
-
-          infoPanelTempl.querySelector('.info-text').innerHTML =
-            'Klicken, um Zeichnen zu pausieren<br>Letzten Strich löschen mit D<br>Enter, um Rennen zu starten';
+          writeInfo(
+            'Klicken, um Zeichnen zu pausieren<br>Letzten Strich löschen mit D<br>Enter, um Rennen zu starten'
+          );
         } else {
-          infoPanelTempl.querySelector('.info-text').innerHTML =
-            'Klicken, um mit Zeichnen fortzufahren<br>Letzten Strich löschen mit D<br>Enter, um Rennen zu starten';
+          writeInfo(
+            'Klicken, um mit Zeichnen fortzufahren<br>Letzten Strich löschen mit D<br>Enter, um Rennen zu starten'
+          );
         }
 
         break;
       case GAME_STATE_PICKING:
+        if (playersState[currentPlayer] === 0) return;
+        uploadNextStop(getGridPointerPos());
+
+        gameState = GAME_STATE_WAITING;
+        hideGridOptionPointers(false);
+        writeInfo('Warte auf andere Spieler...');
+
+      /*
         racecarsStopsArray[currentPlayer].push(getGridPointerPos());
 
         let nextPlayerObj = getNextAvailablePlayer();
@@ -173,7 +199,7 @@ window.onload = function () {
           gridPointer.style.backgroundColor = playerColors[currentPlayer];
           drawGridOptionPointers();
         }
-        break;
+        */
       default:
         break;
     }
@@ -188,7 +214,9 @@ window.onload = function () {
     if (trackDrawingActive) {
       traceTrack(evt);
     } else if (gameState === GAME_STATE_PICKING) {
-      drawGridPointer(evt);
+      if (playersState[currentPlayer] === 1) {
+        drawGridPointer(evt);
+      }
     }
     if (touch) {
       // do not call mouse event again;
@@ -216,30 +244,64 @@ window.onload = function () {
       case 'd':
         if (gameState === GAME_STATE_DRAWING) {
           trackDrawingActive = false;
-          rightTrackPoints.pop();
-          middleTrackPoints.pop();
-          leftTrackPoints.pop();
+          if (rightTrackPoints.length > 1) {
+            rightTrackPoints.pop();
+            middleTrackPoints.pop();
+            leftTrackPoints.pop();
+          }
+          lastDrawingRightPos = rightTrackPoints[rightTrackPoints.length - 1];
+          lastDrawingLeftPos = leftTrackPoints[leftTrackPoints.length - 1];
+          lastDrawingMousePos = middleTrackPoints[middleTrackPoints.length - 1];
 
           if (rightTrackPoints.length > 0) {
-            lastDrawingRightPos = rightTrackPoints[rightTrackPoints.length - 1];
-            lastDrawingLeftPos = leftTrackPoints[leftTrackPoints.length - 1];
-            lastDrawingMousePos =
-              middleTrackPoints[middleTrackPoints.length - 1];
           }
 
           drawTrack(false);
 
-          infoPanelTempl.querySelector('.info-text').innerHTML =
-            'Klicken, um mit Zeichnen fortzufahren<br>Letzten Strich löschen mit D<br>Enter, um Rennen zu starten';
+          writeInfo(
+            'Klicken, um mit Zeichnen fortzufahren<br>Letzten Strich löschen mit D<br>Enter, um Rennen zu starten'
+          );
         }
         break;
-      case 'enter':
+      case 'q':
+        // DUPLICATE CODE TO D!!!
         if (gameState === GAME_STATE_DRAWING) {
           trackDrawingActive = false;
-          console.log('Drive Mode enabled!');
-          infoPanelTempl.style.display = 'none';
+          for (let i = 0; i < rightTrackPoints.length - 1; i++) {
+            rightTrackPoints.pop();
+            middleTrackPoints.pop();
+            leftTrackPoints.pop();
+          }
+          if (rightTrackPoints.length > 1) {
+          }
+          lastDrawingRightPos = rightTrackPoints[rightTrackPoints.length - 1];
+          lastDrawingLeftPos = leftTrackPoints[leftTrackPoints.length - 1];
+          lastDrawingMousePos = middleTrackPoints[middleTrackPoints.length - 1];
+
+          if (rightTrackPoints.length > 0) {
+          }
+
+          drawTrack(false);
+
+          writeInfo(
+            'Klicken, um mit Zeichnen fortzufahren<br>Letzten Strich löschen mit D<br>Enter, um Rennen zu starten'
+          );
+        }
+        break;
+
+      case 'enter':
+        if (gameState === GAME_STATE_DRAWING) {
+          if (!isAdmin) return;
+          trackDrawingActive = false;
+          // console.log('Drive Mode enabled!');
+          uploadTrack({
+            rightTrackPoints: rightTrackPoints,
+            leftTrackPoints: leftTrackPoints,
+          });
+          /*
           initRacecars();
           startRace();
+          */
         }
         break;
       case 'backspace':
@@ -254,9 +316,35 @@ window.onload = function () {
   });
 };
 
-function initGame() {
-  console.log('init Game!');
+function startDrawing() {
   gameState = GAME_STATE_DRAWING;
+  if (!isAdmin) {
+    writeInfo('Warten auf Admin...');
+  }
+}
+
+function drive() {
+  gameState = GAME_STATE_RACING;
+  hideGridOptionPointers();
+  hideInfo();
+  animateRacecars();
+}
+
+function initRace() {
+  drawTrack();
+  initRacecars();
+  startRace();
+
+  hideInfo();
+}
+
+function nextPickingRound() {
+  gameState = GAME_STATE_PICKING;
+  if (playersState[currentPlayer] === 1) {
+    drawGridOptionPointers();
+  } else {
+    writeInfo('Warte auf andere Spieler...');
+  }
 }
 
 function getNextAvailablePlayer() {
@@ -281,7 +369,7 @@ function getNextAvailablePlayer() {
 
 function startRace() {
   gameState = GAME_STATE_PICKING;
-  gridPointer.style.backgroundColor = playerColors[0];
+  // gridPointer.style.backgroundColor = playerColors[0];
   drawGridOptionPointers();
 }
 
@@ -300,8 +388,40 @@ function setWinner(playerIndex) {
     winnersText += `<b>${i + 1}. Platz:<b> Spieler ${winners[i] + 1}<br>`;
   }
 
-  infoPanelTempl.querySelector('.info-text').innerHTML = winnersText;
+  winnersPanel.querySelector('.info-text').innerHTML = winnersText;
+  winnersPanel.style.display = 'flex';
+}
+
+function writeInfo(text) {
+  infoPanelTempl.querySelector('.info-text').innerHTML = text;
   infoPanelTempl.style.display = 'flex';
+}
+
+function hideInfo() {
+  infoPanelTempl.style.display = 'none';
+}
+
+function popup(text) {
+  let clone = infoPanelTempl.cloneNode(true);
+  clone.style.display = 'flex';
+  clone.querySelector('.info-text').innerHTML = text;
+  let parent = infoPanelTempl.parentNode;
+  parent.appendChild(clone);
+
+  setTimeout(() => {
+    parent.removeChild(clone);
+  }, 2000);
+}
+
+function addPlayersPanelTag(index) {
+  playersPanel.innerHTML += `<span id="player-tag-${index}" style="border-bottom: 3px solid ${
+    carColors[players[index].car]
+  }">${players[index].name}${index === currentPlayer ? ' (Du)' : ''}</span>`;
+}
+
+function crossOutPlayersPanelTag(index) {
+  let tag = document.getElementById(`player-tag-${index}`);
+  tag.style.textDecoration = 'line-through';
 }
 
 // function isMouseOnGridOptions(mousePos) {
@@ -368,15 +488,17 @@ function drawGridPointer(evt = null) {
     'px';
 }
 
-function hideGridOptionPointers() {
+function hideGridOptionPointers(hideGridPointer = true) {
   for (let i = 0; i < 9; i++) {
     let cp = gridOptionPointers[i];
     cp.style.left = '-500px';
     cp.style.top = '-500px';
   }
 
-  gridPointer.style.left = '-500px';
-  gridPointer.style.top = '-500px';
+  if (hideGridPointer) {
+    gridPointer.style.left = '-500px';
+    gridPointer.style.top = '-500px';
+  }
 }
 
 function drawGridOptionPointers() {
@@ -488,6 +610,7 @@ function animateRacecars() {
   const ANIMATION_FRAMES = 30;
 
   for (let i = 0; i < NUM_PLAYERS; i++) {
+    if (playersState[i] === 0) continue;
     let aimPos = racecarsStopsArray[i][racecarsStopsArray[i].length - 1];
     let carVect = calculateDirectionVector(racecarsPos[i], aimPos);
     let carVectAngle = calculateLineAngle(0, 0, carVect.x, carVect.y);
@@ -495,8 +618,8 @@ function animateRacecars() {
     carVect.x = carVect.x / ANIMATION_FRAMES;
     carVect.y = carVect.y / ANIMATION_FRAMES;
 
-    carVects.push(carVect);
-    carVectAngles.push(carVectAngle);
+    carVects[i] = carVect;
+    carVectAngles[i] = carVectAngle;
   }
 
   let frames = 0;
@@ -506,7 +629,9 @@ function animateRacecars() {
       clearInterval(animInterval);
 
       // next Round
-      gameState = GAME_STATE_PICKING;
+      nextPickingRound();
+      /*
+
       currentPlayer = -1;
       currentPlayer = getNextAvailablePlayer()[0];
       if (currentPlayer === -1) {
@@ -516,6 +641,7 @@ function animateRacecars() {
         gridPointer.style.backgroundColor = playerColors[currentPlayer];
         drawGridOptionPointers();
       }
+      */
       return;
     }
 
@@ -524,7 +650,7 @@ function animateRacecars() {
 
     for (let i = 0; i < NUM_PLAYERS; i++) {
       // skip this if racecar is dead
-      if (racecarsPos[i].x < 0) continue;
+      if (playersState[i] === 0) continue;
       switch (checkForBoundaryCrash(racecarsPos[i], carVects[i])) {
         case 1:
           break;
@@ -541,14 +667,15 @@ function animateRacecars() {
             x: -500,
             y: -500,
           };
+          playersState[i] = 0;
+          if (i === currentPlayer) {
+            uploadDeath();
+          }
+          crossOutPlayersPanelTag(i);
           continue;
           break;
         default:
           break;
-      }
-
-      if (checkForBoundaryCrash(racecarsPos[i], carVects[i])) {
-        //clearInterval(animInterval);
       }
 
       racecarsPos[i].x += carVects[i].x;
@@ -575,7 +702,7 @@ function animateRacecars() {
     // number of active players
     let playerNum = 0;
     for (let i = 0; i < NUM_PLAYERS; i++) {
-      if (racecarsPos[i].x < 0) continue;
+      if (playersState[i] === 0) continue;
       avgPos.x += racecarsPos[i].x;
       avgPos.y += racecarsPos[i].y;
       playerNum++;
@@ -594,6 +721,8 @@ function animateRacecars() {
 
 // needs to be refactored: use animateRacecars instead of duplicate code!!
 function replay() {
+  if (racecarsStopsArray[0].length < 2) return;
+
   let replayFrames = 0;
   for (let i = 0; i < NUM_PLAYERS; i++) {
     if (racecarsStopsArray[i].length > replayFrames) {
@@ -613,7 +742,7 @@ function replay() {
     const ANIMATION_FRAMES = 30;
 
     for (let i = 0; i < NUM_PLAYERS; i++) {
-      if (f >= racecarsStopsArray[i].length) continue;
+      if (!racecarsStopsArray[i][f]) continue;
       let aimPos = racecarsStopsArray[i][f];
       let carVect = calculateDirectionVector(racecarsPos[i], aimPos);
       let carVectAngle = calculateLineAngle(0, 0, carVect.x, carVect.y);
@@ -695,7 +824,7 @@ function drawRacecars(skipIndex = -1) {
   let carVectAngles = [];
 
   for (let i = 0; i < NUM_PLAYERS; i++) {
-    //let aimPos = racecarsStopsArray[i][racecarsStopsArray[i].length - 1];
+    if (playersState[i] === 0) continue;
     let lastPos = racecarsStopsArray[i][racecarsStopsArray[i].length - 2];
     let aimPos = racecarsPos[i];
     let carVect = calculateDirectionVector(lastPos, aimPos);
@@ -711,7 +840,7 @@ function drawRacecars(skipIndex = -1) {
   ctx.setTransform(1, 0, 0, 1, 0, 0);
 
   for (let i = 0; i < NUM_PLAYERS; i++) {
-    if (skipIndex === i) continue;
+    if (skipIndex === i || playersState[i] === 0) continue;
     ctx.setTransform(1, 0, 0, 1, racecarsPos[i].x, racecarsPos[i].y);
 
     ctx.rotate(degrees_to_radians(carVectAngles[i]));
@@ -910,7 +1039,7 @@ function initRacecars() {
 
       ctx.rotate(degrees_to_radians(-(startLineAngle + 90)));
     };
-    racecarImgs[i].src = `assets/racecar-${i + 1}.png`;
+    racecarImgs[i].src = `assets/racecar-${players[i].car}.png`;
 
     // add array for every car with the first position
     racecarsStopsArray.push([
@@ -1153,9 +1282,11 @@ function drawRacecarsHistory(upTo = -1) {
     } else if (upTo < 0) {
       // draw line to crash point
       let lastStop = racecarsStopsArray[i][racecarsStopsArray[i].length - 1];
-      ctx.lineTo(lastStop.x, lastStop.y);
+      if (lastStop) {
+        ctx.lineTo(lastStop.x, lastStop.y);
+      }
     }
-    ctx.strokeStyle = playerColors[i];
+    ctx.strokeStyle = carColors[players[i].car]; // = playerColors[i];
     ctx.stroke();
   }
   ctx.strokeStyle = 'black';

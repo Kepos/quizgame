@@ -8,7 +8,12 @@
   </head>
   <body>
     <div class="game-container">
+      <div class="players-panel" id="players-panel"></div>
       <div class="info-panel">
+        <div class="info-panel-element" id="winners-panel">
+          <span class="info-icon">i</span>
+          <span class="info-text">Winners:</span>
+        </div>
         <div class="info-panel-element" id="info-panel-template">
           <span class="info-icon">i</span>
           <span class="info-text"
@@ -28,27 +33,51 @@
             <div>
               <div class="settings-card-container" onclick="onSelectRacecar(0)">
                 <div class="settings-card racecar-card">
-                  <img src="assets/racecar-1.png" width="40" />
+                  <img src="assets/racecar-0.png" width="40" />
                 </div>
                 <span>Infinity<br />Green</span>
               </div>
               <div class="settings-card-container" onclick="onSelectRacecar(1)">
                 <div class="settings-card racecar-card">
-                  <img src="assets/racecar-2.png" width="40" />
+                  <img src="assets/racecar-1.png" width="40" />
                 </div>
                 <span>Majesty<br />Blue</span>
               </div>
               <div class="settings-card-container" onclick="onSelectRacecar(2)">
                 <div class="settings-card racecar-card">
-                  <img src="assets/racecar-3.png" width="40" />
+                  <img src="assets/racecar-2.png" width="40" />
                 </div>
                 <span>Curiosity<br />Yellow</span>
               </div>
               <div class="settings-card-container" onclick="onSelectRacecar(3)">
                 <div class="settings-card racecar-card">
-                  <img src="assets/racecar-4.png" width="40" />
+                  <img src="assets/racecar-3.png" width="40" />
                 </div>
                 <span>Simply<br />Red</span>
+              </div>
+              <div class="settings-card-container" onclick="onSelectRacecar(5)">
+                <div class="settings-card racecar-card">
+                  <img src="assets/racecar-4.png" width="40" />
+                </div>
+                <span>Pathetic<br />Pink</span>
+              </div>
+              <div class="settings-card-container" onclick="onSelectRacecar(6)">
+                <div class="settings-card racecar-card">
+                  <img src="assets/racecar-5.png" width="40" />
+                </div>
+                <span>Space<br />Gray</span>
+              </div>
+              <div class="settings-card-container" onclick="onSelectRacecar(6)">
+                <div class="settings-card racecar-card">
+                  <img src="assets/racecar-6.png" width="40" />
+                </div>
+                <span>Audacity<br />Black</span>
+              </div>
+              <div class="settings-card-container" onclick="onSelectRacecar(6)">
+                <div class="settings-card racecar-card">
+                  <img src="assets/racecar-7.png" width="40" />
+                </div>
+                <span>British<br />Green</span>
               </div>
             </div>
 
@@ -218,6 +247,19 @@
       z-index: 10;
     }
 
+    .players-panel {
+      position: fixed;
+      bottom: 15px;
+      left: 25px;
+      z-index: 10;
+    }
+
+    .players-panel span {
+      font-size: 10px;
+      margin-right: 15px;
+      border-bottom: 3px solid black;
+    }
+
     .info-panel-element {
       padding: 20px 40px;
       background-color: #e0e0e0;
@@ -234,6 +276,10 @@
       padding: 5px 12px;
       border-radius: 40px;
       margin-right: 20px;
+    }
+
+    #winners-panel {
+      display: none;
     }
 
     .game-settings-container {
@@ -255,6 +301,7 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      overflow-y: scroll;
     }
     .game-settings input[type='radio'] {
       visibility: hidden;

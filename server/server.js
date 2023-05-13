@@ -155,6 +155,11 @@ server.on('error', (err) => {
   console.error(err);
 });
 
-server.listen(8080, () => {
+let port = process.env.PORT;
+if (port == null || port == '') {
+  port = 8080;
+}
+
+server.listen(port, () => {
   console.log('server is ready');
 });

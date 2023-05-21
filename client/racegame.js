@@ -25,7 +25,7 @@ const GRID_OFFSET = CANVAS_MARGIN + CANVAS_PADDING;
 
 var TRACK_WIDTH = 200;
 
-const DRAW_INTERVAL = 15;
+const DRAW_INTERVAL = 20;
 
 var NUM_PLAYERS = 4;
 var playersState = [];
@@ -765,6 +765,8 @@ function cameraToAvgPos() {
   }
   avgPos.x /= playerNum;
   avgPos.y /= playerNum;
+
+  if (playerNum === 0) return;
 
   window.scrollTo(
     avgPos.x - window.innerWidth / 2,

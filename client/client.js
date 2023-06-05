@@ -6,6 +6,8 @@ let tracks = ['NBG', 'Raincastle', 'Monaco', 'Custom'];
 
 let isAdmin = false;
 
+let uploadNextTrackPoint;
+let uploadRemovalOfTrackPoints;
 let uploadTrack;
 let uploadNextStop;
 let uploadDeath;
@@ -68,6 +70,18 @@ const onPlayButtonClicked = (sock) => () => {
     playersState[index] = 0;
   });
 
+  sock.on('nextTrackPoint', (mousePos) => {
+    if (!lastDrawingMousePos) {
+      setFirstDrawingPoint(mousePos);
+    } else {
+      traceTrack(mousePos);
+    }
+  });
+
+  sock.on('removeTrackPoints', (onlyLast) => {
+    removePartOfTrack(onlyLast);
+  });
+
   sock.on('track', (info) => {
     console.log('Track received!');
 
@@ -100,6 +114,14 @@ const onPlayButtonClicked = (sock) => () => {
   document
     .getElementsByClassName('play-button')[0]
     .addEventListener('click', onPlayButtonClicked(sock));
+
+  uploadNextTrackPoint = (mousePos) => {
+    sock.emit('nextTrackPoint', mousePos);
+  };
+
+  uploadRemovalOfTrackPoints = (onlyLast) => {
+    sock.emit('removeTrackPoints', onlyLast);
+  };
 
   uploadTrack = (track) => {
     sock.emit('track', track);

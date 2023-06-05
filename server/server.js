@@ -76,6 +76,14 @@ io.on('connection', (sock) => {
     io.emit('newPlayer', playerObjs);
   });
 
+  sock.on('nextTrackPoint', (mousePos) => {
+    sock.broadcast.emit('nextTrackPoint', mousePos);
+  });
+
+  sock.on('removeTrackPoints', (onlyLast) => {
+    sock.broadcast.emit('removeTrackPoints', onlyLast);
+  });
+
   sock.on('track', (track) => {
     console.log('track uploaded: ', track);
     setTrack(track);

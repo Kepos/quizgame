@@ -157,10 +157,12 @@ window.onload = function () {
     switch (gameState) {
       case GAME_STATE_DRAWING:
         if (!isAdmin) return;
+
+        let mousePos = calculateMousePos(evt);
+
         if (!lastDrawingMousePos) {
-          firstDrawingMousePos = calculateMousePos(evt);
-          lastDrawingMousePos = firstDrawingMousePos;
-          ctx.beginPath();
+          uploadNextTrackPoint(mousePos);
+          setFirstDrawingPoint(mousePos);
         }
 
         trackDrawingActive = !trackDrawingActive;
@@ -213,6 +215,7 @@ window.onload = function () {
     lastMouseMoveEvt = evt;
     if (trackDrawingActive) {
       let mousePos = calculateMousePos(evt);
+      uploadNextTrackPoint(mousePos);
       traceTrack(mousePos);
     } else if (gameState === GAME_STATE_PICKING) {
       if (playersState[currentPlayer] === 1) {
@@ -244,14 +247,16 @@ window.onload = function () {
         );
         break;
       case 'd':
-        if (gameState === GAME_STATE_DRAWING) {
+        if (gameState === GAME_STATE_DRAWING && isAdmin) {
           trackDrawingActive = false;
+          uploadRemovalOfTrackPoints(true);
           removePartOfTrack(true);
         }
         break;
       case 'q':
-        if (gameState === GAME_STATE_DRAWING) {
+        if (gameState === GAME_STATE_DRAWING && isAdmin) {
           trackDrawingActive = false;
+          uploadRemovalOfTrackPoints(false);
           removePartOfTrack(false);
         }
         break;
@@ -296,6 +301,12 @@ function startDrawing() {
   }
 }
 
+function setFirstDrawingPoint(mousePos) {
+  firstDrawingMousePos = mousePos;
+  lastDrawingMousePos = firstDrawingMousePos;
+  ctx.beginPath();
+}
+
 function removePartOfTrack(onlyLastPart = true) {
   trackDrawingActive = false;
   let deletePartsNum = onlyLastPart ? 1 : rightTrackPoints.length - 1;
@@ -314,9 +325,11 @@ function removePartOfTrack(onlyLastPart = true) {
 
   drawTrack(false);
 
-  writeInfo(
-    'Klicken, um mit Zeichnen fortzufahren<br>Letzten Strich löschen mit D<br>Enter, um Rennen zu starten'
-  );
+  if (isAdmin) {
+    writeInfo(
+      'Klicken, um mit Zeichnen fortzufahren<br>Letzten Strich löschen mit D<br>Enter, um Rennen zu starten'
+    );
+  }
 }
 
 function drive() {

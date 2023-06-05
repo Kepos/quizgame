@@ -212,7 +212,8 @@ window.onload = function () {
   function handleMouseMove(evt, touch = false) {
     lastMouseMoveEvt = evt;
     if (trackDrawingActive) {
-      traceTrack(evt);
+      let mousePos = calculateMousePos(evt);
+      traceTrack(mousePos);
     } else if (gameState === GAME_STATE_PICKING) {
       if (playersState[currentPlayer] === 1) {
         drawGridPointer(evt);
@@ -245,44 +246,13 @@ window.onload = function () {
       case 'd':
         if (gameState === GAME_STATE_DRAWING) {
           trackDrawingActive = false;
-          if (rightTrackPoints.length > 1) {
-            rightTrackPoints.pop();
-            middleTrackPoints.pop();
-            leftTrackPoints.pop();
-          }
-          lastDrawingRightPos = rightTrackPoints[rightTrackPoints.length - 1];
-          lastDrawingLeftPos = leftTrackPoints[leftTrackPoints.length - 1];
-          lastDrawingMousePos = middleTrackPoints[middleTrackPoints.length - 1];
-
-          if (rightTrackPoints.length > 0) {
-          }
-
-          drawTrack(false);
-
-          writeInfo(
-            'Klicken, um mit Zeichnen fortzufahren<br>Letzten Strich löschen mit D<br>Enter, um Rennen zu starten'
-          );
+          removePartOfTrack(true);
         }
         break;
       case 'q':
-        // DUPLICATE CODE TO D!!!
         if (gameState === GAME_STATE_DRAWING) {
           trackDrawingActive = false;
-          for (let i = 0; i < rightTrackPoints.length - 1; i++) {
-            rightTrackPoints.pop();
-            middleTrackPoints.pop();
-            leftTrackPoints.pop();
-          }
-
-          lastDrawingRightPos = rightTrackPoints[rightTrackPoints.length - 1];
-          lastDrawingLeftPos = leftTrackPoints[leftTrackPoints.length - 1];
-          lastDrawingMousePos = middleTrackPoints[middleTrackPoints.length - 1];
-
-          drawTrack(false);
-
-          writeInfo(
-            'Klicken, um mit Zeichnen fortzufahren<br>Letzten Strich löschen mit D<br>Enter, um Rennen zu starten'
-          );
+          removePartOfTrack(false);
         }
         break;
 
@@ -324,6 +294,29 @@ function startDrawing() {
   if (!isAdmin) {
     writeInfo('Warten auf Admin...');
   }
+}
+
+function removePartOfTrack(onlyLastPart = true) {
+  trackDrawingActive = false;
+  let deletePartsNum = onlyLastPart ? 1 : rightTrackPoints.length - 1;
+
+  if (rightTrackPoints.length > 1) {
+    for (let i = 0; i < deletePartsNum; i++) {
+      rightTrackPoints.pop();
+      middleTrackPoints.pop();
+      leftTrackPoints.pop();
+    }
+  }
+
+  lastDrawingRightPos = rightTrackPoints[rightTrackPoints.length - 1];
+  lastDrawingLeftPos = leftTrackPoints[leftTrackPoints.length - 1];
+  lastDrawingMousePos = middleTrackPoints[middleTrackPoints.length - 1];
+
+  drawTrack(false);
+
+  writeInfo(
+    'Klicken, um mit Zeichnen fortzufahren<br>Letzten Strich löschen mit D<br>Enter, um Rennen zu starten'
+  );
 }
 
 function drive() {
@@ -1134,8 +1127,7 @@ function degrees_to_radians(degrees) {
   return degrees * (pi / 180);
 }
 
-function traceTrack(evt) {
-  let mousePos = calculateMousePos(evt);
+function traceTrack(mousePos) {
   let directVect = calculateDirectionVector(lastDrawingMousePos, mousePos);
   let distance = calculateDistance(directVect);
   let orthVect = calculateNormOrthoVector(directVect, distance);

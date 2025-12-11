@@ -1132,6 +1132,7 @@ function calculateLineAngle(p1x, p1y, p2x, p2y) {
   var theta = Math.atan2(dy, dx); // range (-PI, PI]
   theta *= 180 / Math.PI; // rads to degs, range (-180, 180]
   //if (theta < 0) theta = 360 + theta; // range [0, 360)
+  console.log(theta);
   return theta;
 }
 
@@ -1146,6 +1147,25 @@ function traceTrack(mousePos) {
   let orthVect = calculateNormOrthoVector(directVect, distance);
 
   if (distance < DRAW_INTERVAL) return;
+
+  // if (rightTrackPoints.length >= 2) {
+  //   let lastVectP1 = rightTrackPoints[rightTrackPoints.length - 2];
+  //   let lastVectP2 = rightTrackPoints[rightTrackPoints.length - 1];
+  //   let lastDirectVect = calculateDirectionVector(lastVectP1, lastVectP2);
+
+  //   var firstAngle = Math.atan2(lastDirectVect.x, lastDirectVect.y);
+  //   var secondAngle = Math.atan2(directVect.x, directVect.y);
+
+  //   var angle = secondAngle - firstAngle;
+  //   angle = (angle * 180) / Math.PI;
+
+  //   console.log('angle:', angle);
+  //   if (angle > 30 || angle < -30) {
+  //     return;
+  //   }
+  // }
+
+  // console.log('Theta: ', calculateLineAngle(0, 0, directVect.x, directVect.y));
 
   // move to a point which lies orthogonally to the connection between mousePos and lastDrawingMousePos
   // RIGHT POS

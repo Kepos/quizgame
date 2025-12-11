@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Player</title>
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.png" />
+    <link href="./output.css" rel="stylesheet" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+    />
+  </head>
+  <body>
+    <div
+      class="game-container h-screen w-screen bg-[#345] flex flex-col items-center justify-center"
+    >
+      <input class="bg-white mb-5" id="nameinput" type="text" />
+      <button
+        class="bg-red-600 text-white cursor-pointer p-5 rounded-2xl play-button"
+        onclick="onBuzzerClicked()"
+      >
+        Buzzer!
+      </button>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- <script type="text/javascript" src="racegame.js"></script> -->
+    <script type="text/javascript" src="player.js"></script>
+  </body>
+</html>

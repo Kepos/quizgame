@@ -1,0 +1,52 @@
+@import 'tailwindcss';
+
+@font-face {
+  font-family: 'Monotalic';
+  src: url('fonts/Monotalic-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+:root {
+  font-family: 'Arial';
+  color: white;
+}
+
+h1 {
+  font-family: 'Spotify Mix';
+  color: #ce5bd3;
+  text-align: center;
+  line-height: 0.9;
+  transform: rotate(-6deg);
+  font-size: 40px;
+  margin: 0px 0px 60px -30px;
+}
+
+h2 {
+  font-family: 'Monotalic';
+  color: white;
+  text-align: center;
+  line-height: 0.9;
+  font-size: 40px;
+  margin: 0px -7px 60px;
+}
+
+.game-container {
+  background-image: url('./assets/winternight.jpg');
+  background-blend-mode: overlay;
+  background-repeat: repeat-y;
+  background-attachment: fixed;
+}
+
+.team-name-label {
+  font-size: 25px;
+  font-family: 'Monotalic';
+  color: white;
+}
+
+.team-score-label {
+  font-size: 50px;
+  font-family: 'Monotalic';
+  font-weight: bold;
+  color: #ce5bd3;
+}

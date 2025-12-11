@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Maptest</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.png" />
+    <!-- <link href="./output.css" rel="stylesheet" /> -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+  </head>
+  <body>
+    <div
+      class="game-container h-screen w-screen bg-[#345] flex items-center justify-center"
+    >
+      <div id="map"></div>
+      <button>Hallihallo</button>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- <script type="text/javascript" src="racegame.js"></script> -->
+    <script>
+      var map = L.map('map').setView([49.49, 11.11], 3);
+
+      //   L.tileLayer(
+      //     'https://tiles.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',
+      //     {
+      //       attribution: '',
+      //     }
+      //   ).addTo(map);
+
+      var marker;
+
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 7,
+        attribution:
+          '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      }).addTo(map);
+      //   L.tileLayer(
+      //     'https://tiles.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',
+      //     {
+      //       attribution: '',
+      //     }
+      //   ).addTo(map);
+
+      map.on('click', function (e) {
+        if (marker) map.removeLayer(marker);
+
+        console.log(e.latlng.lat, e.latlng.lng);
+        marker = new L.Marker(e.latlng, { draggable: true });
+        map.addLayer(marker);
+      });
+
+      setTimeout(() => {
+        map.invalidateSize();
+      }, 200);
+    </script>
+  </body>
+  <style>
+    /* @font-face {
+      font-family: Silom;
+      src: url(fonts/Silom.ttf);
+    } */
+
+    #map {
+      height: 480px;
+      width: 100%;
+    }
+    /* 
+    :root {
+      --brg: #003a23;
+    }
+
+    body {
+      background: var(--brg);
+      margin: 0px;
+      overflow: scroll;
+      font-family: Silom, Arial, Helvetica, sans-serif;
+    }
+    .game-container {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+    }
+
+    .info-panel {
+      position: fixed;
+      bottom: 15px;
+      right: 15px;
+      z-index: 10;
+    }
+
+    .players-panel {
+      position: fixed;
+      bottom: 15px;
+      left: 25px;
+      z-index: 10;
+    }
+
+    .players-panel span {
+      font-size: 10px;
+      margin-right: 15px;
+      border-bottom: 3px solid black;
+    }
+
+    .info-panel-element {
+      padding: 20px 40px;
+      background-color: #e0e0e0;
+      border-radius: 8px;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .info-icon {
+      background-color: var(--brg);
+      color: white;
+      padding: 5px 12px;
+      border-radius: 40px;
+      margin-right: 20px;
+    }
+
+    #info-panel-game-end {
+      display: none;
+    }
+
+    #restart-panel {
+      display: none;
+      z-index: 200;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    #visitor-panel {
+      display: none;
+    }
+
+    #winners-panel {
+      display: none;
+    }
+
+    .game-settings-container {
+      background-color: var(--brg);
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      position: fixed;
+    }
+    .game-settings {
+      width: 95%;
+      height: 95%;
+      background-color: #f4f4f4;
+      border-radius: 5px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow-y: scroll;
+    }
+    .game-settings input[type='radio'] {
+      visibility: hidden;
+      height: 0;
+      width: 0;
+    }
+
+    .game-settings label {
+      cursor: pointer;
+      background-color: #454545;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 3px;
+    }
+    .game-settings input[type='radio']:checked + label {
+      background-color: #58ba83;
+    }
+
+    .settings-input-container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1 {
+      color: var(--brg);
+    }
+
+    h2 {
+      font-size: 20px;
+      margin-top: 40px;
+    }
+
+    .name-input {
+      font-size: 20px;
+      font-family: Silom;
+      padding: 5px;
+      color: #777;
+    }
+
+    .settings-card-container {
+      text-align: center;
+      display: inline-block;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+
+    .settings-card-container span {
+      font-size: 12px;
+      margin-top: 10px;
+      display: inline-block;
+      max-width: 100%;
+    }
+
+    .settings-card {
+      background-color: white;
+      border-radius: 5px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 60px;
+      height: 60px;
+      border: 3px solid transparent;
+    }
+
+    #select-racetrack {
+      display: none;
+    }
+
+    .play-button {
+      background-color: var(--brg);
+      color: white;
+      font-family: Silom;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      align-self: center;
+      margin-top: 30px;
+      font-size: 17px;
+    }
+
+    .play-button:disabled {
+      opacity: 0.3;
+    }
+
+    .canvas-container {
+      position: relative;
+    }
+    .canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      margin: 20px;
+    }
+    #grid-canvas {
+      background: #fff;
+    }
+    #canvas {
+      background: transparent;
+    }
+    #grid-pointer {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: red;
+      border: 1px solid black;
+      top: -50px;
+      left: -50px;
+      border-radius: 20px;
+      pointer-events: none;
+    }
+    [id^='grid-option'] {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: gray;
+      border: 1px solid transparent;
+      top: -50px;
+      left: -50px;
+      border-radius: 20px;
+      pointer-events: none;
+    } */
+  </style>
+</html>

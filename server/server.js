@@ -5,7 +5,7 @@ const createGame = require('./create-game');
 
 const app = express();
 
-app.use(express.static(`${__dirname}/../client`, { index: 'racegame.html' }));
+app.use(express.static(`${__dirname}/../client`, { index: 'player.html' }));
 
 const server = http.createServer(app);
 const io = socketio(server);
@@ -61,6 +61,11 @@ io.on('connection', (sock) => {
   }
 
   sock.on('message', (text) => console.log(`got text: ${text}`));
+
+  sock.on('Buzzer', (name) => {
+    console.log(`${name} buzzered ... emitting event!`);
+    io.emit('Buzzer', name);
+  });
 
   sock.on('signup', (player) => {
     if (!acceptNewPlayers) {

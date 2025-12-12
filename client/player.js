@@ -9,7 +9,7 @@ const onChatSubmitted = (sock) => (e) => {
 
 const onBuzzerClicked = (sock) => () => {
   // sock.emit('message', 'lets play!');
-  let name = document.getElementById('nameinput').value;
+  let name = 'Titus'; // document.getElementById('nameinput').value;
   sock.emit('Buzzer', name);
 };
 

@@ -3,29 +3,206 @@
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Player</title>
-    <link rel="icon" type="image/x-icon" href="/assets/favicon.png" />
-    <link href="./output.css" rel="stylesheet" />
+    <meta name="theme-color" content="#000" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
     />
+    <title>PLAYER</title>
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.png" />
+    <link href="./output.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
   </head>
-  <body>
+  <body class="h-screen">
     <div
-      class="game-container h-screen w-screen bg-[#345] flex flex-col items-center justify-center"
+      class="game-container bg-[#380448] text-center max-w-7xl w-full p-5 h-full flex flex-col items-center justify-start pt-40"
     >
-      <input class="bg-white mb-5" id="nameinput" type="text" />
-      <button
-        class="bg-red-600 text-white cursor-pointer p-5 rounded-2xl play-button"
-        onclick="onBuzzerClicked()"
-      >
-        Buzzer!
-      </button>
+      <h1 class="absolute scale-75 select-none top-10" onclick="changeView(0)">
+        o holy<br />
+        <span class="text-[#d5d514]"
+          >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;quiznight!</span
+        >
+      </h1>
+
+      <!-- Buzzer  -->
+      <div id="buzzer" class="hidden flex flex-col h-full justify-center">
+        <!-- <input class="bg-white mb-5" id="nameinput" type="text" /> -->
+        <button
+          class="bg-red-600 select-none active:bg-red-700 active:scale-90 active:border-5 active:text-yellow-500 -mt-32 text-xl text-white border-8 border-red-500 cursor-pointer rounded-[200px] w-64 h-64 play-button"
+        >
+          Buzzer
+        </button>
+      </div>
+
+      <!-- Waiting Screen -->
+      <div id="waiting-screen" class="hidden mt-20 text-3xl font-[Monotalic]">
+        Please wait...
+      </div>
+
+      <!-- Game #2 Umfragewerte -->
+      <div id="game-umfragewerte" class="hidden font-[Monotalic]">
+        <span class="text-3xl mb-12 mt-20 inline-block">Bist du ein Affe?</span>
+        <button
+          class="w-full text-2xl p-5 border-3 rounded-2xl bg-green-800 border-green-400 mb-10"
+        >
+          Ja
+        </button>
+        <button
+          class="w-full text-2xl p-5 border-3 rounded-2xl bg-red-900 border-red-400"
+        >
+          Nein
+        </button>
+      </div>
+
+      <!-- Game #9 MapFinder -->
+      <div id="game-mapfinder" class="hidden font-[Monotalic] w-full">
+        <span class="text-3xl mb-8 inline-block">MapFinder</span>
+        <div id="map"></div>
+        <button
+          class="w-full text-2xl text-black p-3 rounded-2xl bg-[#ce5bd3] mt-10 mb-10"
+        >
+          Absenden
+        </button>
+      </div>
     </div>
+
     <script src="/socket.io/socket.io.js"></script>
     <!-- <script type="text/javascript" src="racegame.js"></script> -->
     <script type="text/javascript" src="player.js"></script>
   </body>
+  <style>
+    #map {
+      height: 400px;
+      width: 100%;
+      max-width: 600px;
+    }
+  </style>
+  <script>
+    function setMap() {
+      // Map init
+      var map = L.map('map').setView([49.49, 11.11], 3);
+      //   L.tileLayer(
+      //     'https://tiles.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',
+      //     {
+      //       attribution: '',
+      //     }
+      //   ).addTo(map);
+      var marker;
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 7,
+        attribution:
+          '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      }).addTo(map);
+      //   L.tileLayer(
+      //     'https://tiles.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',
+      //     {
+      //       attribution: '',
+      //     }
+      //   ).addTo(map);
+      map.on('click', function (e) {
+        if (marker) map.removeLayer(marker);
+
+        console.log(e.latlng.lat, e.latlng.lng);
+        //marker = new L.Marker(e.latlng, { draggable: true });
+        // marker = new L.Marker(e.latlng, {
+        //   icon: new L.DivIcon({
+        //     className: 'my-div-icon',
+        //     html: '<div class="text-amber-900">Titus</div>',
+        //     // '<img class="my-div-image" src="http://png-3.vector.me/files/images/4/0/402272/aiga_air_transportation_bg_thumb"/>' +
+        //     // '<span class="my-div-span">Titus</span>',
+        //   }),
+        // });
+        marker = L.marker(e.latlng).bindTooltip('Kimbo', {
+          permanent: true,
+          direction: 'right',
+        });
+        map.addLayer(marker);
+      });
+
+      setTimeout(() => {
+        map.invalidateSize();
+      }, 200);
+    }
+
+    setMap();
+    let CURRENT_VIEW = 0;
+    let currentViewID = '';
+
+    function changeView(num) {
+      switch (num) {
+        case -3:
+          currentViewID = 'buzzer';
+          break;
+        case -2:
+          currentViewID = 'leaderboard';
+          break;
+        case -1:
+          currentViewID = 'points-panel';
+          break;
+        case 0:
+          currentViewID = 'waiting-screen';
+          break;
+        case 1:
+          currentViewID = 'game-quiz-question';
+          break;
+        case 2:
+          currentViewID = 'game-umfragewerte';
+          break;
+        case 3:
+          currentViewID = 'game-einsortieren';
+          break;
+        case 4:
+          currentViewID = 'game-pantomime';
+          break;
+        case 5:
+          currentViewID = 'game-kategorie';
+          break;
+        case 6:
+          currentViewID = 'game-mapfinder';
+          break;
+        case 7:
+          currentViewID = 'game-whoisthis';
+          break;
+        case 8:
+          currentViewID = 'game-songs';
+          break;
+        case 9:
+          currentViewID = 'game-teamguessing';
+          break;
+        case 10:
+          currentViewID = 'game-multiple-choice';
+          break;
+        case 11:
+          currentViewID = 'game-creative-writing';
+          break;
+        case 12:
+          currentViewID = 'game-blamieren-kassieren';
+          break;
+        case 13:
+          currentViewID = 'game-teamguessing';
+          break;
+        default:
+          currentViewID = 'games-panel';
+          break;
+      }
+      document
+        .querySelectorAll('.game-container > div')
+        .forEach((elem) => elem.classList.add('hidden'));
+      document.getElementById(currentViewID).classList.remove('hidden');
+      map.invalidateSize();
+    }
+
+    CURRENT_VIEW = -3;
+    changeView(CURRENT_VIEW);
+  </script>
 </html>

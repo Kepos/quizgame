@@ -688,7 +688,19 @@
       if (marker) map.removeLayer(marker);
 
       console.log(e.latlng.lat, e.latlng.lng);
-      marker = new L.Marker(e.latlng, { draggable: true });
+      //marker = new L.Marker(e.latlng, { draggable: true });
+      // marker = new L.Marker(e.latlng, {
+      //   icon: new L.DivIcon({
+      //     className: 'my-div-icon',
+      //     html: '<div class="text-amber-900">Titus</div>',
+      //     // '<img class="my-div-image" src="http://png-3.vector.me/files/images/4/0/402272/aiga_air_transportation_bg_thumb"/>' +
+      //     // '<span class="my-div-span">Titus</span>',
+      //   }),
+      // });
+      marker = L.marker(e.latlng).bindTooltip('Kimbo', {
+        permanent: true,
+        direction: 'right',
+      });
       map.addLayer(marker);
     });
 

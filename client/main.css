@@ -13,8 +13,15 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'Spotify Mix';
+  src: url('fonts/SpotifyMix-UltraItalic.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+}
+
 :root {
-  font-family: 'Arial';
+  font-family: 'Monotalic';
   color: white;
 }
 

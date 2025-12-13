@@ -13,13 +13,13 @@ const io = socketio(server);
 
 let admin;
 let players = [];
-let playerObjs = [];
-let deadPlayers = [];
-let playersMoves = [];
 
-// block setting new admin for game restart
-let blockNewAdmin = false;
-let acceptNewPlayers = true;
+let teams = [
+  { points: 0, members: [] },
+  { points: 0, members: [] },
+  { points: 0, members: [] },
+  { points: 0, members: [] },
+];
 
 function getNextFreeIndex() {
   for (let i = 0; i <= players.length; i++) {
@@ -30,11 +30,10 @@ function getNextFreeIndex() {
 }
 
 function allPlayersSelectedNextMove() {
+  return;
   // check if all the not-undefined values from playersMoves add up to alive players Num
   console.log('all playes selected?');
   console.log('playersmoveslength', playersMoves.filter((v) => v).length);
-  console.log('players', players.length);
-  console.log('dead players', deadPlayers);
   return (
     playersMoves.filter((v) => v).length >= players.length - deadPlayers.length
   );
@@ -50,20 +49,30 @@ io.on('connection', (sock) => {
   console.log('someone connected:', playerID);
   sock.emit('message', 'You are connected!!');
 
-  if (!admin && !blockNewAdmin) {
-    admin = playerID;
-    sock.emit('admin');
-  }
+  // if (!admin && !blockNewAdmin) {
+  //   admin = playerID;
+  //   sock.emit('admin');
+  // }
 
-  if (!acceptNewPlayers) {
-    sock.emit('nosignup');
-  }
+  // if (!acceptNewPlayers) {
+  //   sock.emit('nosignup');
+  // }
 
   sock.on('message', (text) => console.log(`got text: ${text}`));
 
   sock.on('Buzzer', (name) => {
     console.log(`${name} buzzered ... emitting event!`);
     io.emit('Buzzer', name);
+  });
+
+  sock.on('Login', (playerObj, callback) => {
+    console.log(`new player: ${playerObj.name} ${playerObj.team}`);
+    console.log(callback);
+    teams[playerObj.team].members.push(playerObj.name);
+    console.log(teams[playerObj.team]);
+    callback({
+      status: 'ok',
+    });
   });
 
   sock.on('signup', (player) => {
@@ -78,44 +87,6 @@ io.on('connection', (sock) => {
     sock.emit('playerindex', playerIndex);
     player.index = playerIndex;
     io.emit('newPlayer', playerObjs);
-  });
-
-  sock.on('nextTrackPoint', (mousePos) => {
-    sock.broadcast.emit('nextTrackPoint', mousePos);
-  });
-
-  sock.on('removeTrackPoints', (onlyLast) => {
-    sock.broadcast.emit('removeTrackPoints', onlyLast);
-  });
-
-  sock.on('track', (track) => {
-    console.log('track uploaded: ', track);
-    setTrack(track);
-    acceptNewPlayers = false;
-    io.emit('track', { track: track, players: Array(players.length).fill(1) });
-  });
-
-  sock.on('nextStop', (nextStop) => {
-    var index = players.indexOf(playerID);
-    if (index !== -1) {
-      addMove(index, nextStop.x, nextStop.y);
-    }
-    playersMoves[index] = nextStop;
-    console.log('index', index);
-    console.log('pindex', playerIndex);
-    console.log(playersMoves);
-
-    if (allPlayersSelectedNextMove()) {
-      io.emit('playersMoves', playersMoves);
-      playersMoves = [];
-    }
-  });
-
-  sock.on('death', (index) => {
-    console.log('player died: ', index, players[index]);
-    if (!deadPlayers.includes(players[index])) {
-      deadPlayers.push(players[index]);
-    }
   });
 
   sock.on('disconnect', (reason) => {

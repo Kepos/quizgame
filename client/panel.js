@@ -1,5 +1,3 @@
-let sock;
-
 let isAdmin = true;
 
 let uploadNextTrackPoint;
@@ -14,14 +12,8 @@ const onPlayButtonClicked = (sock) => () => {
   sock.emit('signup', { name: enteredPlayerName, car: selectedCarIndex });
 };
 
-function onGameCardClicked(number) {
-  sock.emit('new-game', number, () => {
-    changeView(number);
-  });
-}
-
 (() => {
-  sock = io();
+  const sock = io();
 
   sock.on('message', (text) => {});
 
@@ -41,11 +33,9 @@ function onGameCardClicked(number) {
 
   console.log('welcome');
 
-  // document
-  //   .getElementsByClassName('play-button')[0]
-  //   .addEventListener('click', onPlayButtonClicked(sock));
-
-  document.getElementsByClassName('');
+  document
+    .getElementsByClassName('play-button')[0]
+    .addEventListener('click', onPlayButtonClicked(sock));
 
   uploadNextTrackPoint = (mousePos) => {
     sock.emit('nextTrackPoint', mousePos);

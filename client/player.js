@@ -23,7 +23,11 @@ const onLoginButtonClicked = (sock) => () => {
     return;
   }
   console.log({ name: name, team: team });
-  sock.emit('Login', { name: name, team: team });
+  sock.emit('Login', { name: name, team: team }, (response) => {
+    if (response.status == 'ok') {
+      // changeView(0);
+    }
+  });
 };
 
 (() => {

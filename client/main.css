@@ -53,7 +53,7 @@ h3 {
   margin: 0px -7px 30px;
 }
 
-.game-container {
+body {
   background-image: url('./assets/winternight.jpg');
   background-blend-mode: overlay;
   background-repeat: repeat-y;

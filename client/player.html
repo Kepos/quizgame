@@ -23,9 +23,9 @@
       crossorigin=""
     ></script>
   </head>
-  <body class="h-screen">
+  <body class="h-screen bg-[#380448]">
     <div
-      class="game-container bg-[#380448] text-center max-w-7xl w-full p-5 h-full flex flex-col items-center justify-start pt-40"
+      class="flex flex-col items-center justify-start w-full h-full p-5 pt-40 m-auto text-center game-container max-w-7xl"
     >
       <h1 class="absolute scale-75 select-none top-10" onclick="changeView(0)">
         o holy<br />
@@ -35,8 +35,8 @@
       </h1>
 
       <!-- Buzzer  -->
-      <div id="buzzer" class="hidden flex flex-col h-full justify-center">
-        <!-- <input class="bg-white mb-5" id="nameinput" type="text" /> -->
+      <div id="buzzer" class="flex flex-col justify-center hidden h-full">
+        <!-- <input class="mb-5 bg-white" id="nameinput" type="text" /> -->
         <button
           class="bg-red-600 select-none active:bg-red-700 active:scale-90 active:border-5 active:text-yellow-500 -mt-32 text-xl text-white border-8 border-red-500 cursor-pointer rounded-[200px] w-64 h-64 play-button"
         >
@@ -53,16 +53,20 @@
       <div id="login-screen" class="hidden mt-3 text-3xl">
         <h3>Wer bist du?</h3>
         <input
+          placeholder="Dein Name..."
           id="player-name-input"
           type="text"
           maxlength="10"
-          class="bg-white text-black"
+          class="p-2 text-black bg-white rounded-lg"
         />
-        <select id="team-selection" class="bg-white text-black mt-5">
-          <option value="1">Team 1</option>
-          <option value="2">Team 2</option>
-          <option value="3">Team 3</option>
-          <option value="4">Team 4</option>
+        <select
+          id="team-selection"
+          class="p-2 mt-5 text-black bg-white rounded-lg"
+        >
+          <option value="0">Team 1</option>
+          <option value="1">Team 2</option>
+          <option value="2">Team 3</option>
+          <option value="3">Team 4</option>
         </select>
         <button
           id="login-button"
@@ -74,14 +78,14 @@
 
       <!-- Game #2 Umfragewerte -->
       <div id="game-umfragewerte" class="hidden font-[Monotalic]">
-        <span class="text-3xl mb-12 mt-20 inline-block">Bist du ein Affe?</span>
+        <span class="inline-block mt-20 mb-12 text-3xl">Bist du ein Affe?</span>
         <button
-          class="w-full text-2xl p-5 border-3 rounded-2xl bg-green-800 border-green-400 mb-10"
+          class="w-full p-5 mb-10 text-2xl bg-green-800 border-green-400 border-3 rounded-2xl"
         >
           Ja
         </button>
         <button
-          class="w-full text-2xl p-5 border-3 rounded-2xl bg-red-900 border-red-400"
+          class="w-full p-5 text-2xl bg-red-900 border-red-400 border-3 rounded-2xl"
         >
           Nein
         </button>
@@ -89,7 +93,7 @@
 
       <!-- Game #11 Creative Writing -->
       <div id="game-creative-writing" class="hidden font-[Monotalic] w-full">
-        <div class="flex flex-col space-y-2 w-full">
+        <div class="flex flex-col w-full space-y-2">
           <label class="cursor-pointer">
             <input type="radio" name="word" class="hidden peer" />
             <span
@@ -172,7 +176,7 @@
 
       <!-- Game #6 MapFinder -->
       <div id="game-mapfinder" class="hidden font-[Monotalic] w-full">
-        <span class="text-3xl mb-8 inline-block">MapFinder</span>
+        <span class="inline-block mb-8 text-3xl">MapFinder</span>
         <div id="map"></div>
         <button
           class="w-full text-2xl text-black p-3 rounded-2xl bg-[#ce5bd3] mt-10 mb-10"
@@ -183,12 +187,12 @@
 
       <!-- Game #9 TeamGuessing -->
       <div id="game-teamguessing" class="hidden font-[Monotalic] w-full">
-        <span class="text-3xl mb-8 inline-block"
+        <span class="inline-block mb-8 text-3xl"
           >Wieviel wiegt ein Elefant?</span
         >
         <input
           type="number"
-          class="bg-white rounded-2xl text-black text-5xl text-center w-full"
+          class="w-full text-5xl text-center text-black bg-white rounded-2xl"
         />
         <button
           class="w-full text-2xl text-black p-3 rounded-2xl bg-[#ce5bd3] mt-10 mb-10"
@@ -199,24 +203,24 @@
 
       <!-- Game #10 Multiple Choice -->
       <div id="game-multiple-choice" class="hidden">
-        <span class="text-3xl mb-12 inline-block">WER IST DER KING?</span>
+        <span class="inline-block mb-12 text-3xl">WER IST DER KING?</span>
         <button
-          class="w-full text-left text-2xl p-5 border-3 rounded-2xl text-black bg-yellow-300 border-yellow-100 mb-4"
+          class="w-full p-5 mb-4 text-2xl text-left text-black bg-yellow-300 border-yellow-100 border-3 rounded-2xl"
         >
           A: Niemand
         </button>
         <button
-          class="w-full text-left text-2xl p-5 border-3 rounded-2xl text-black bg-yellow-300 border-yellow-100 mb-4"
+          class="w-full p-5 mb-4 text-2xl text-left text-black bg-yellow-300 border-yellow-100 border-3 rounded-2xl"
         >
           B: Du
         </button>
         <button
-          class="w-full text-left text-2xl p-5 border-3 rounded-2xl text-black bg-yellow-300 border-yellow-100 mb-4"
+          class="w-full p-5 mb-4 text-2xl text-left text-black bg-yellow-300 border-yellow-100 border-3 rounded-2xl"
         >
           C: Ich
         </button>
         <button
-          class="w-full text-left text-2xl p-5 border-3 rounded-2xl text-black bg-yellow-300 border-yellow-100 mb-4"
+          class="w-full p-5 mb-4 text-2xl text-left text-black bg-yellow-300 border-yellow-100 border-3 rounded-2xl"
         >
           D: Deine Mudder
         </button>

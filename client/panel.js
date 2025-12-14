@@ -1,6 +1,25 @@
 let isAdmin = true;
 
-let uploadNextTrackPoint;
+let currentGame = 'games-panel';
+let currentGameState = 0;
+const games = [
+  'game-quiz-question', // case 1
+  'game-quiz-question', // case 1
+  'game-quiz-question', // case 1
+  'game-quiz-question', // case 1
+  'game-umfragewerte', // case 5
+  'game-einsortieren', // case 6
+  'game-pantomime', // case 7
+  'game-kategorie', // case 8
+  'game-mapfinder', // case 9
+  'game-whoisthis', // case 10
+  'game-songs', // case 11
+  'game-teamguessing', // case 12
+  'game-multiple-choice', // case 13
+  'game-creative-writing', // case 14
+  'game-blamieren-kassieren', // case 15
+  'game-mitspieler', // case 16
+];
 
 // unused
 const onChatSubmitted = (sock) => (e) => {
@@ -28,7 +47,7 @@ const onPlayButtonClicked = (sock) => () => {
   });
 
   sock.on('new-game', (number) => {
-    startGameAnimation(number);
+    gameSelectionAnimation(number);
   });
 
   sock.on('new-score', (teamNo, score) => {
@@ -48,10 +67,6 @@ const onPlayButtonClicked = (sock) => () => {
   //   document
   //     .getElementsByClassName('play-button')[0]
   //     .addEventListener('click', onPlayButtonClicked(sock));
-
-  uploadNextTrackPoint = (mousePos) => {
-    sock.emit('nextTrackPoint', mousePos);
-  };
 
   restartGame = () => {
     let rp = document.getElementById('restart-panel');

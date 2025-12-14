@@ -14,6 +14,28 @@ const io = socketio(server);
 let admin;
 let players = [];
 
+const games = [
+  'game-quiz-question', // case 1
+  'game-quiz-question', // case 1
+  'game-quiz-question', // case 1
+  'game-quiz-question', // case 1
+  'game-umfragewerte', // case 5
+  'game-einsortieren', // case 6
+  'game-pantomime', // case 7
+  'game-kategorie', // case 8
+  'game-mapfinder', // case 9
+  'game-whoisthis', // case 10
+  'game-songs', // case 11
+  'game-teamguessing', // case 12
+  'game-multiple-choice', // case 13
+  'game-creative-writing', // case 14
+  'game-blamieren-kassieren', // case 15
+  'game-mitspieler', // case 16
+];
+
+let currentGame = 'panel';
+let currentGameState = 0;
+
 let teams = [
   { points: 0, members: [] },
   { points: 0, members: [] },
@@ -77,6 +99,7 @@ io.on('connection', (sock) => {
 
   sock.on('new-game', (number, callback) => {
     console.log(`start new Game, no: ${number}`);
+    currentGame = games[number - 1];
     io.emit('new-game', number);
     callback({
       status: 'ok',
@@ -165,6 +188,285 @@ io.on('connection', (sock) => {
       blockNewAdmin = false;
       sock.emit('restart');
     }, 2000);
+  });
+
+  sock.on('next', (index, callback) => {
+    switch (currentGame) {
+      // Game No. 1
+      case 'game-quiz-question':
+        switch (currentGameState) {
+          case 0:
+            //
+            callback({
+              status: 'ok',
+              nextUp: '# Open Question Card',
+            });
+            currentGameState++;
+            break;
+          case 1:
+            //
+            callback({
+              status: 'ok',
+              nextUp: 'Back To Questions',
+            });
+            currentGameState--;
+            break;
+        }
+        break;
+
+      // Game No 2
+      case 'game-umfragewerte':
+        switch (currentGameState) {
+          case 0:
+            //
+            callback({
+              status: 'ok',
+              nextUp: 'Show Results',
+            });
+            currentGameState++;
+            break;
+          case 1:
+            //
+            callback({
+              status: 'ok',
+              nextUp: 'Next Question',
+            });
+            currentGameState--;
+            break;
+        }
+        break;
+
+      // Game No 3
+      case 'game-einsortieren':
+        switch (currentGameState) {
+          case 0:
+            //
+            callback({
+              status: 'ok',
+              nextUp: 'Next List',
+            });
+            currentGameState++;
+            break;
+          case 1:
+            //
+            callback({
+              status: 'ok',
+              nextUp: 'Next Question',
+            });
+            currentGameState--;
+            break;
+        }
+        break;
+
+      // Game no 4
+      case 'game-pantomime':
+        switch (currentGameState) {
+          case 0:
+            //
+            callback({
+              status: 'ok',
+              nextUp: 'Restart Timer',
+            });
+            break;
+        }
+        break;
+
+      // Game no 5
+      case 'game-kategorie':
+        switch (currentGameState) {
+          case 0:
+            //
+            callback({
+              status: 'ok',
+              nextUp: 'Restart Timer',
+            });
+            break;
+        }
+        break;
+
+      // Game no 6
+      case 'game-mapfinder':
+        switch (currentGameState) {
+          case 0:
+            // Show Question
+            callback({
+              status: 'ok',
+              nextUp: 'Show Markers',
+            });
+            currentGameState++;
+            break;
+          case 1:
+            // Show Markers
+            callback({
+              status: 'ok',
+              nextUp: 'Show Correct Marker',
+            });
+            currentGameState++;
+            break;
+          case 2:
+            // Show Correct Marker
+            callback({
+              status: 'ok',
+              nextUp: 'Show Leaderboard',
+            });
+            currentGameState++;
+            break;
+          case 3:
+            // Show Leaderboard
+            callback({
+              status: 'ok',
+              nextUp: 'Show Team Average',
+            });
+            currentGameState++;
+            break;
+          case 4:
+            // Show Team Average
+            callback({
+              status: 'ok',
+              nextUp: 'Show Next Question',
+            });
+            currentGameState = 0;
+            break;
+        }
+        break;
+
+      // Game no 7
+      case 'game-whoisthis':
+        switch (currentGameState) {
+          case 0:
+            //
+            callback({
+              status: 'ok',
+              nextUp: 'Next Picture',
+            });
+            break;
+        }
+        break;
+
+      // Game no 8
+      case 'game-songs':
+        break;
+
+      // Game no 9
+      case 'game-teamguessing':
+        switch (currentGameState) {
+          case 0:
+            // Show Question
+            callback({
+              status: 'ok',
+              nextUp: 'Show Results',
+            });
+            currentGameState++;
+            break;
+          case 1:
+            // Show Results
+            callback({
+              status: 'ok',
+              nextUp: 'Show Correct Result',
+            });
+            currentGameState++;
+            break;
+          case 2:
+            // Show Results
+            callback({
+              status: 'ok',
+              nextUp: 'Show Averages',
+            });
+            currentGameState++;
+            break;
+          case 3:
+            // Show Averages
+            callback({
+              status: 'ok',
+              nextUp: 'Next Question',
+            });
+            currentGameState = 0;
+            break;
+        }
+        break;
+
+      // Game no 10
+      case 'game-multiple-choice':
+        if (index == 1) currentGameState = 1;
+        switch (currentGameState) {
+          case 0:
+            // Show Question
+            callback({
+              status: 'ok',
+              nextUp: 'Show Results',
+            });
+            currentGameState++;
+            break;
+          case 1:
+            // Show Results
+            callback({
+              status: 'ok',
+              nextUp: 'Show Team Points',
+            });
+            break;
+        }
+        break;
+
+      // Game no 11
+      case 'game-creative-writing':
+        switch (currentGameState) {
+          case 0:
+            // Show Prompt
+            callback({
+              status: 'ok',
+              nextUp: 'Show Answers',
+            });
+            currentGameState++;
+            break;
+          case 1:
+            // Show Answers
+            callback({
+              status: 'ok',
+              nextUp: 'Show Votes',
+            });
+            currentGameState++;
+            break;
+          case 2:
+            // Show Votes
+            callback({
+              status: 'ok',
+              nextUp: 'Show Next Prompt',
+            });
+            currentGameState = 0;
+            break;
+        }
+        break;
+
+      // Game no 12
+      case 'game-blamieren-kassieren':
+        break;
+
+      // Game no 13
+      case 'game-mitspieler':
+        switch (currentGameState) {
+          case 0:
+            // Show Question
+            callback({
+              status: 'ok',
+              nextUp: 'Show Results',
+            });
+            currentGameState++;
+            break;
+          case 1:
+            // Show Results
+            callback({
+              status: 'ok',
+              nextUp: 'Show Next Question',
+            });
+            currentGameState = 0;
+            break;
+        }
+        break;
+
+      // BIG DEFAULT
+      default:
+        break;
+    }
   });
 });
 

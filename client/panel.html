@@ -610,15 +610,15 @@
 
     .wave-path {
       stroke: #f5ff34;
-      stroke-width: 15px;
+      stroke-width: 20px;
       fill: none;
-      animation: waveMorve 0.8s linear infinite;
+      animation: waveMove 0.8s linear infinite;
     }
     .wave-path-2 {
       stroke: #f5ff34;
-      stroke-width: 15px;
+      stroke-width: 20px;
       fill: none;
-      animation: waveMorve 0.8s -0.5s linear infinite;
+      animation: waveMove 0.8s -0.5s linear infinite reverse;
     }
 
     @keyframes waveMove {
@@ -631,30 +631,30 @@
     }
 
     .wave-path-move {
-      transform: translateY(100px) scaleY(1.5);
-      animation: waveMoveUp 3s cubic-bezier(1, 0, 0, 1) forwards;
+      transform: translateY(100px);
+      animation: waveMoveUp 3s cubic-bezier(1, -0.72, 0, 1.2) forwards;
     }
 
     .wave-path-2-move {
-      transform: translateY(-100px) scaleY(1.5);
-      animation: waveMoveDown 3s cubic-bezier(1, 0, 0, 1) forwards;
+      transform: translateY(-100px);
+      animation: waveMoveDown 3s cubic-bezier(1, -0.72, 0, 1.2) forwards;
     }
 
     @keyframes waveMoveUp {
       0% {
-        transform: translateY(100px) scaleY(1.5);
+        transform: translateY(100px);
       }
       100% {
-        transform: translateY(0px) scaleY(1.5);
+        transform: translateY(0px);
       }
     }
 
     @keyframes waveMoveDown {
       0% {
-        transform: translateY(-100px) scaleY(1.5);
+        transform: translateY(-100px);
       }
       100% {
-        transform: translateY(0px) scaleY(1.5);
+        transform: translateY(0px);
       }
     }
 
@@ -676,7 +676,7 @@
     }
 
     .blink {
-      animation: blink 2s;
+      animation: blink 1s 2s;
     }
 
     .grayscale {
@@ -690,17 +690,32 @@
         opacity: 1;
       }
       50% {
-        transform: scale(1.1);
+        transform: scale(1.05);
         opacity: 1;
       }
       100% {
-        transform: scale(0.9);
+        transform: scale(0.95);
         opacity: 0;
       }
     }
 
     .grid-grow-shrink {
-      animation: growShrinkFade 1s forwards ease-out;
+      animation: growShrinkFade 0.7s 0.5s forwards ease-out;
+    }
+
+    .game-container {
+      transition: opacity 250ms ease, transform 250ms ease;
+      transform-origin: center;
+    }
+
+    .game-container.is-fading-out {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+
+    .game-container.is-fading-in {
+      opacity: 1;
+      transform: scale(1);
     }
   </style>
   <script>
@@ -770,7 +785,7 @@
       map.invalidateSize();
     }, 200);
 
-    function startGameAnimation(index) {
+    function gameSelectionAnimation(index) {
       const grid = document.querySelector('#games-panel .grid');
       const images = grid.querySelectorAll('img');
       const img = images[index - 1];
@@ -793,14 +808,20 @@
           panel.classList.add('hidden'); // Grid verstecken
           img.classList.add('grayscale');
           panel.removeEventListener('animationend', handleGrid);
-          setTimeout(() => {
-            document.getElementById('animated-game-name').innerHTML =
-              'No. ' + index + ' Game!';
-            changeView(-3);
-            animateGameName();
-          }, 1000);
+          gameStartAnimation();
         });
       });
+    }
+
+    function gameStartAnimation() {
+      document.getElementById('animated-game-name').textContent = currentGame;
+      setTimeout(() => {
+        changeView(-3);
+        animateGameName();
+        setTimeout(() => {
+          changeView(5);
+        }, 1000);
+      }, 1000);
     }
 
     //Fade in Images
@@ -829,12 +850,12 @@
         header.appendChild(span);
       });
 
-      document
-        .getElementById('wave-container-1')
-        .classList.add('wave-path-move');
-      document
-        .getElementById('wave-container-2')
-        .classList.add('wave-path-2-move');
+      //   document
+      //     .getElementById('wave-container-1')
+      //     .classList.add('wave-path-move');
+      //   document
+      //     .getElementById('wave-container-2')
+      //     .classList.add('wave-path-2-move');
     }
 
     let CURRENT_VIEW = 0;
@@ -855,53 +876,78 @@
           currentViewID = 'games-panel';
           break;
         case 1:
+        case 2:
+        case 3:
+        case 4:
           currentViewID = 'game-quiz-question';
           break;
-        case 2:
-          currentViewID = 'game-multiple-choice';
-          break;
-        case 3:
-          currentViewID = 'game-einsortieren';
-          break;
-        case 4:
-          currentViewID = 'game-pantomime';
-          break;
         case 5:
-          currentViewID = 'game-kategorie';
+          currentViewID = 'game-multiple-choice';
           break;
         case 6:
-          currentViewID = 'game-mapfinder';
+          currentViewID = 'game-einsortieren';
           break;
         case 7:
-          currentViewID = 'game-whoisthis';
+          currentViewID = 'game-pantomime';
           break;
         case 8:
-          currentViewID = 'game-songs';
+          currentViewID = 'game-kategorie';
           break;
         case 9:
-          currentViewID = 'game-teamguessing';
+          currentViewID = 'game-mapfinder';
           break;
         case 10:
-          currentViewID = 'game-multiple-choice';
+          currentViewID = 'game-whoisthis';
           break;
         case 11:
-          currentViewID = 'game-creative-writing';
+          currentViewID = 'game-songs';
           break;
         case 12:
-          currentViewID = 'game-blamieren-kassieren';
+          currentViewID = 'game-teamguessing';
           break;
         case 13:
+          currentViewID = 'game-multiple-choice';
+          break;
+        case 14:
+          currentViewID = 'game-creative-writing';
+          break;
+        case 15:
+          currentViewID = 'game-blamieren-kassieren';
+          break;
+        case 16:
           currentViewID = 'game-teamguessing';
           break;
         default:
           currentViewID = 'games-panel';
           break;
       }
-      document
-        .querySelectorAll('.game-container > div')
-        .forEach((elem) => elem.classList.add('hidden'));
-      document.getElementById(currentViewID).classList.remove('hidden');
-      map.invalidateSize();
+
+      let gameContainer = document.getElementsByClassName('game-container')[0];
+
+      // 1️⃣ Fade + Shrink raus
+      gameContainer.classList.add('is-fading-out');
+      gameContainer.classList.remove('is-fading-in');
+
+      // 2️⃣ Nach der Animation View wechseln
+      setTimeout(() => {
+        document
+          .querySelectorAll('.game-container > div')
+          .forEach((el) => el.classList.add('hidden'));
+
+        document.getElementById(currentViewID).classList.remove('hidden');
+
+        map.invalidateSize();
+
+        // 3️⃣ Fade + Grow rein
+        gameContainer.classList.remove('is-fading-out');
+        gameContainer.classList.add('is-fading-in');
+      }, 250); // muss zur CSS-Duration passen
+
+      //   document
+      //     .querySelectorAll('.game-container > div')
+      //     .forEach((elem) => elem.classList.add('hidden'));
+      //   document.getElementById(currentViewID).classList.remove('hidden');
+      //   map.invalidateSize();
     }
 
     CURRENT_VIEW = 0;

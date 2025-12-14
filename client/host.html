@@ -127,6 +127,19 @@
 
         <!-- Current Games Panel -->
         <div id="games-container" class="flex flex-col items-center flex-3">
+          <div id="game-header" class="flex flex-col hidden mb-5">
+            <h3 id="game-name-label">Q1</h3>
+            <div class="flex flex-col navigation-buttons">
+              <button
+                id="nextButton"
+                class="p-5 bg-gray-600 cursor-pointer rounded-xl"
+                onclick="onNextButtonClicked()"
+              >
+                Next: <span>Show XYZ</span>
+              </button>
+            </div>
+          </div>
+
           <!-- Games Panel -->
           <div
             id="games-panel"
@@ -359,12 +372,6 @@
 
           <!-- Game #1 Quiz Question  -->
           <div id="game-quiz-question" class="hidden">
-            <h3>Q1</h3>
-            <div class="flex flex-col navigation-buttons">
-              <button class="p-5 bg-gray-600 cursor-pointer rounded-xl">
-                Next: <span>Show XYZ</span>
-              </button>
-            </div>
             <div class="flex flex-col">
               <select
                 id="question-selection"
@@ -381,56 +388,52 @@
             </div>
           </div>
 
-          <!-- Game #2 Umfragewerte  -->
-          <div id="game-umfragewerte" class="hidden">
-            <h3>Umfragewerte</h3>
-            <div class="flex flex-col navigation-buttons">
-              <button class="p-5 mb-5 bg-gray-600 cursor-pointer rounded-xl">
-                Next: <span>Show XYZ</span>
-              </button>
-            </div>
-          </div>
+          <!-- Game #5 Umfragewerte  -->
+          <div id="game-umfragewerte" class="hidden"></div>
 
-          <!-- Game #3 Sortieren -->
+          <!-- Game #6 Sortieren -->
           <div id="game-einsortieren" class="hidden">
-            <h3>Umfragewerte</h3>
-            <div class="flex flex-col navigation-buttons">
-              <button class="p-5 mb-5 bg-gray-600 cursor-pointer rounded-xl">
-                Next: <span>Show XYZ</span>
-              </button>
-              <div class="flex flex-col space-y-4">
-                <div class="p-2 text-black bg-yellow-400 rounded">Test</div>
-                <div class="p-2 text-black bg-yellow-400 rounded">Test</div>
-                <div class="p-2 text-black bg-yellow-400 rounded">Test</div>
-                <div class="p-2 text-black bg-yellow-400 rounded">Test</div>
-                <div class="p-2 text-black bg-yellow-400 rounded">Test</div>
-                <div class="p-2 text-black bg-yellow-400 rounded">Test</div>
-                <div class="p-2 text-black bg-yellow-400 rounded">Test</div>
-              </div>
+            <div class="flex flex-col space-y-4">
+              <div class="p-2 text-black bg-yellow-400 rounded">Test</div>
+              <div class="p-2 text-black bg-yellow-400 rounded">Test</div>
+              <div class="p-2 text-black bg-yellow-400 rounded">Test</div>
+              <div class="p-2 text-black bg-yellow-400 rounded">Test</div>
+              <div class="p-2 text-black bg-yellow-400 rounded">Test</div>
+              <div class="p-2 text-black bg-yellow-400 rounded">Test</div>
+              <div class="p-2 text-black bg-yellow-400 rounded">Test</div>
             </div>
           </div>
 
-          <!-- Game #4 Pantomime / Kateogire -->
-          <div id="game-einsortieren" class="hidden">
-            <h3>Pnatomime</h3>
-            <div class="flex flex-col navigation-buttons">
-              <button class="p-5 mb-5 bg-gray-600 cursor-pointer rounded-xl">
-                Start Game
-              </button>
+          <!-- Game #7 Pantomime -->
+          <div id="game-pantomime" class="hidden"></div>
+          <!-- Game #8 Kateogire -->
+          <div id="game-kategorie" class="hidden"></div>
+          <!-- Game #9 Mapfinder -->
+          <div id="game-mapfinder" class="hidden"></div>
+          <!-- Game #10 whoisthis -->
+          <div id="game-whoisthis" class="hidden"></div>
+          <!-- Game #11 Songs -->
+          <div id="game-songs" class="hidden"></div>
+          <!-- Game #12 TeamGuessing -->
+          <div id="game-teamguessing" class="hidden"></div>
+
+          <!-- Game #13 Multiple Choice / Game #2 Umfragewerte -->
+          <div id="game-multiple-choice" class="hidden">
+            <h2 class="mt-72! text-[60px]!">Wer ist der reichste Europäer?</h2>
+            <div class="grid grid-cols-2 gap-8">
+              <span class="text-4xl text-center">A: Castrop-Rauxel</span>
+              <span class="text-4xl text-center">B: Castrop-Rauxel</span>
+              <span class="text-4xl text-center">C: Castrop-Rauxel</span>
+              <span class="text-4xl text-center">D: Castrop-Rauxel</span>
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- Game #10 Multiple Choice / Game #2 Umfragewerte -->
-      <div id="game-multiple-choice" class="hidden">
-        <h2>Multiple Choice</h2>
-        <h2 class="mt-72! text-[60px]!">Wer ist der reichste Europäer?</h2>
-        <div class="grid grid-cols-2 gap-8">
-          <span class="text-4xl text-center">A: Castrop-Rauxel</span>
-          <span class="text-4xl text-center">B: Castrop-Rauxel</span>
-          <span class="text-4xl text-center">C: Castrop-Rauxel</span>
-          <span class="text-4xl text-center">D: Castrop-Rauxel</span>
+          <!-- Game #14 Creative Writing -->
+          <div id="game-creative-writing" class="hidden"></div>
+          <!-- Game #15 Blamieren Kassieren -->
+          <div id="game-blamieren-kassieren" class="hidden"></div>
+          <!-- Game #16 Mitspieler schätzen -->
+          <div id="game-mitspieler" class="hidden"></div>
         </div>
       </div>
     </div>
@@ -527,42 +530,45 @@
           currentViewID = 'games-panel';
           break;
         case 1:
+        case 2:
+        case 3:
+        case 4:
           currentViewID = 'game-quiz-question';
           break;
-        case 2:
+        case 5:
           currentViewID = 'game-umfragewerte';
           break;
-        case 3:
+        case 6:
           currentViewID = 'game-einsortieren';
           break;
-        case 4:
+        case 7:
           currentViewID = 'game-pantomime';
           break;
-        case 5:
-          currentViewID = 'game-kategorie';
-          break;
-        case 6:
-          currentViewID = 'game-mapfinder';
-          break;
-        case 7:
-          currentViewID = 'game-whoisthis';
-          break;
         case 8:
-          currentViewID = 'game-songs';
+          currentViewID = 'game-pantomime';
           break;
         case 9:
-          currentViewID = 'game-teamguessing';
+          currentViewID = 'game-mapfinder';
           break;
         case 10:
-          currentViewID = 'game-multiple-choice';
+          currentViewID = 'game-whoisthis';
           break;
         case 11:
-          currentViewID = 'game-creative-writing';
+          currentViewID = 'game-songs';
           break;
         case 12:
-          currentViewID = 'game-blamieren-kassieren';
+          currentViewID = 'game-teamguessing';
           break;
         case 13:
+          currentViewID = 'game-multiple-choice';
+          break;
+        case 14:
+          currentViewID = 'game-creative-writing';
+          break;
+        case 15:
+          currentViewID = 'game-blamieren-kassieren';
+          break;
+        case 16:
           currentViewID = 'game-teamguessing';
           break;
         default:
@@ -573,6 +579,8 @@
         .querySelectorAll('#games-container > div')
         .forEach((elem) => elem.classList.add('hidden'));
       document.getElementById(currentViewID).classList.remove('hidden');
+      if (currentViewID != 'games-panel')
+        document.getElementById('game-header').classList.remove('hidden');
     }
 
     CURRENT_VIEW = 0;

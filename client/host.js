@@ -24,6 +24,20 @@ const games = [
   'game-mitspieler', // case 16
 ];
 
+document.querySelectorAll('img[data-game]').forEach((img) => {
+  img.title = img.dataset.game;
+});
+
+let quizData;
+
+async function loadQuizData() {
+  const response = await fetch('questions/questions.json');
+  const data = await response.json();
+
+  quizData = data.gameQuestions;
+}
+loadQuizData();
+
 // unused
 const onChatSubmitted = (sock) => (e) => {
   e.preventDefault();
@@ -36,6 +50,7 @@ const onPlayButtonClicked = (sock) => () => {
 
 function onGameCardClicked(emitter) {
   let newGame = emitter.getAttribute('data-game');
+  emitter.classList.add('opacity-50');
   sock.emit('new-game', newGame, (response) => {
     if (response.status == 'ok') {
       currentGame = newGame;
@@ -66,6 +81,47 @@ function onBackToPanelButtonClicked() {
       currentGameState = 0;
       changeView();
     }
+  });
+}
+
+let sentOptions = [];
+
+function onSelectionSendButtonClicked() {
+  let select = document.getElementById('sort-element-selection');
+  sock.emit('sort-selection', select.value, (response) => {
+    if (response.status == 'ok') {
+      sentOptions.push(select.value);
+      setSelectionOptions();
+    }
+  });
+}
+
+function setSelectionOptions() {
+  if (currentGameState - 2 >= quizData['game-einsortieren'].lists.length)
+    return;
+  let select = document.getElementById('sort-element-selection');
+  select.innerHTML = '';
+  let optionsArray = quizData['game-einsortieren'].lists[currentGameState - 2];
+  let startWord = optionsArray[0];
+  let sortIndex = 1;
+  optionsArray.forEach((text, index) => {
+    if (text == startWord) {
+      if (index > 0) {
+        sortIndex++;
+      }
+      return;
+    }
+    const opt = document.createElement('option');
+    opt.value = text;
+    if (sentOptions.includes(text)) {
+      opt.disabled = true;
+      sortIndex++;
+      opt.textContent = text;
+    } else {
+      opt.textContent = sortIndex + ' ' + text;
+    }
+
+    select.appendChild(opt);
   });
 }
 
@@ -146,6 +202,11 @@ function setCurrentGameView() {
       switch (currentGameState) {
         case 0:
           nextButton.textContent = 'Show First List';
+          currentGameState++;
+          break;
+        default:
+          currentGameState++;
+          setSelectionOptions();
           break;
       }
       break;

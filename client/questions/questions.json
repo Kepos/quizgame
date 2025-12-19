@@ -108,16 +108,21 @@
     "game-einsortieren": {
       "title": "Game #6 Einsortieren",
       "lists": [
-        "Gesuchtes Wort",
-        "1",
-        "2",
-        "3",
-        "Gesuchtes Wort",
-        "4",
-        "5",
-        "6",
-        "7"
-      ]
+        [
+          "Hamburg",
+          "Sankt Petersburg",
+          "Hamburg",
+          "Mailand",
+          "Birmingham",
+          "Marseille",
+          "Rotterdam",
+          "Göteborg",
+          "Graz",
+          "Porto"
+        ],
+        ["Center Word", "1", "2", "3", "Center Word", "4", "5", "6", "7", "8"]
+      ],
+      "indicators": [["viel", "wenig"], ["früh, spät"]]
     },
     "game-pantomime": {
       "title": "Game #7 Pantomime"
@@ -133,7 +138,7 @@
           "answer": { "lat": 49.49, "lng": 11.11 }
         },
         {
-          "question": "Wo steht die größte Statue der Welt?",
+          "question": "Wo steht die kleinste Statue der Welt?",
           "answer": { "lat": 49.49, "lng": 11.11 }
         }
       ]

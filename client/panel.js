@@ -31,7 +31,6 @@ async function loadQuizData() {
 
   quizData = data.gameQuestions;
 }
-
 loadQuizData();
 
 // unused
@@ -94,6 +93,10 @@ const onPlayButtonClicked = (sock) => () => {
     game_payload = payload;
     changeView();
   });
+
+  sock.on('sort-selection', (elem) => {
+    setSortingGame(elem);
+  });
 })();
 
 function onNameChanged() {
@@ -101,6 +104,70 @@ function onNameChanged() {
   enteredPlayerName = playerName.value;
 
   checkForCompleteData();
+}
+
+let sortedOptions = [];
+function setSortingGame(newSortedWord = false) {
+  // -1 because gamestate gets incremented directly in setCurrentGameView()
+  if (currentGameState - 1 >= quizData['game-einsortieren'].lists.length)
+    return;
+  if (newSortedWord) {
+    sortedOptions.push(newSortedWord);
+  }
+  let options = document.getElementById('game-einsortieren-options');
+  let list = document.getElementById('game-einsortieren-sorted-list');
+
+  options.innerHTML = '';
+  list.innerHTML = '';
+
+  let optionsArray = quizData['game-einsortieren'].lists[currentGameState - 1];
+  let startWord = optionsArray[0];
+  if (!sortedOptions.includes(startWord)) sortedOptions.push(startWord);
+
+  optionsArray.forEach((text) => {
+    if (text == startWord || sortedOptions.includes(text)) return;
+    const div = document.createElement('div');
+    div.className = 'px-5 py-1 text-3xl text-black bg-gray-200 rounded ';
+    div.textContent = text;
+
+    options.appendChild(div);
+  });
+
+  let sortingNum = 1;
+  const span = document.createElement('span');
+  span.textContent = sortingNum;
+  list.appendChild(span);
+
+  optionsArray.forEach((text, index) => {
+    if (index == 0 || !sortedOptions.includes(text)) {
+      return;
+    }
+
+    const div = document.createElement('div');
+    div.className = 'px-5 py-1 text-3xl text-black bg-yellow-300 rounded';
+    div.textContent = text;
+
+    sortingNum++;
+    const span2 = document.createElement('span');
+    span2.textContent = sortingNum;
+
+    list.appendChild(div);
+    list.appendChild(span2);
+  });
+  //   <span>1</span>
+  // <div
+  //     class="px-5 py-1 text-3xl text-black bg-yellow-300 rounded"
+  // >
+  //     Hallo Test
+  // </div>
+  // <span>2</span>
+  // <div
+  //     class="px-5 py-1 text-3xl text-black bg-yellow-300 rounded"
+  // >
+  //     Hallo Test
+  // </div>
+  // <span>3</span>
+  //
 }
 
 function setCurrentGameView() {
@@ -127,6 +194,11 @@ function setCurrentGameView() {
           document
             .getElementById('game-quiz-question-options')
             .classList.add('hidden');
+          const img = document.querySelector(
+            `#game-quiz-question-options img:nth-child(${game_payload})`
+          );
+          img.classList.add('opacity-25');
+          img.classList.remove('opacity-100');
           let question = document.getElementById('game-quiz-question-question');
           question.textContent =
             quizData[`game-quiz-question-1`].questions[
@@ -149,6 +221,9 @@ function setCurrentGameView() {
           elem.classList.remove('hidden');
           document
             .getElementById('game-multiple-choice-chart')
+            .classList.add('hidden');
+          document
+            .getElementById('game-multiple-choice-answers')
             .classList.add('hidden');
           currentGameState++;
           updateChart(0, 0);
@@ -174,17 +249,14 @@ function setCurrentGameView() {
     // Game No 6
     case 'game-einsortieren':
       switch (currentGameState) {
-        case 0:
+        default:
+          // Show the first list
+          sortedOptions = [];
           document
             .getElementById('game-einsortieren-game')
             .classList.remove('hidden');
           currentGameState++;
-          break;
-        case 1:
-          document
-            .getElementById('game-einsortieren-game')
-            .classList.remove('hidden');
-          // Next List !!
+          setSortingGame();
           break;
       }
       break;
@@ -209,14 +281,28 @@ function setCurrentGameView() {
 
     // Game no 9
     case 'game-mapfinder':
-      switch (currentGameState) {
+      switch (currentGameState % 5) {
         case 0:
           // Show Question / Map
-          document.getElementById('map').classList.remove('hidden');
+          document.getElementById('map').classList.add('hidden');
+          const questionField = document.getElementById(
+            'game-mapfinder-question'
+          );
+          questionField.classList.remove('hidden');
+          const question =
+            quizData['game-mapfinder']?.questions?.[currentGameState / 5]
+              .question;
+          if (question) {
+            questionField.innerHTML = question;
+          }
           currentGameState++;
           break;
         case 1:
           // Show Markers
+          document
+            .getElementById('game-mapfinder-question')
+            .classList.add('hidden');
+          document.getElementById('map').classList.remove('hidden');
           currentGameState++;
           break;
         case 2:
@@ -229,7 +315,7 @@ function setCurrentGameView() {
           break;
         case 4:
           // Show Team Average
-          currentGameState = 0;
+          currentGameState++;
           break;
       }
       break;
@@ -265,17 +351,43 @@ function setCurrentGameView() {
 
     // Game no 12
     case 'game-teamguessing':
-      switch (currentGameState) {
+      switch (currentGameState % 5) {
         case 0:
+          // Show Question
+          let question =
+            quizData['game-teamguessing'].questions[currentGameState / 5]
+              ?.question;
+
+          let questionField = document.getElementById(
+            'game-teamguessing-question'
+          );
+          if (question) {
+            questionField.innerHTML = question;
+          }
+
           document
-            .getElementById('game-teamguessing-question')
-            .classList.remove('opacity-0');
+            .querySelectorAll('.game-teamguessing-answers-table')
+            .forEach((elem) => elem.classList.add('opacity-0'));
+          questionField.classList.remove('opacity-0');
           currentGameState++;
           break;
         case 1:
+          // Show Answers
           document
             .querySelectorAll('.game-teamguessing-answers-table')
             .forEach((elem) => elem.classList.remove('opacity-0'));
+          currentGameState++;
+          break;
+        case 2:
+          // Show Correct Result
+          currentGameState++;
+          break;
+        case 3:
+          // Show Averages
+          currentGameState++;
+          break;
+        case 4:
+          // Show Winner
           currentGameState++;
           break;
       }

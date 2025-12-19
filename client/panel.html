@@ -21,6 +21,10 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
   <body class="h-screen bg-[#380448]">
+    <canvas
+      id="snowfall-element"
+      class="absolute top-0 left-0 w-full h-full opacity-50"
+    ></canvas>
     <div
       class="flex flex-col items-center justify-start h-full pt-56 game-container"
     >
@@ -216,19 +220,27 @@
           <div class="flex flex-row justify-between mt-12">
             <div class="flex-1 text-center">
               <span class="team-name-label">Team 1</span><br />
-              <span id="score-1" class="team-score-label">0</span>
+              <span id="score-1" class="team-score-label text-[#ce5bd3]"
+                >0</span
+              >
             </div>
             <div class="flex-1 text-center">
               <span class="team-name-label">Team Suff000</span><br />
-              <span id="score-2" class="team-score-label">0</span>
+              <span id="score-2" class="team-score-label text-[#5bd35b]"
+                >0</span
+              >
             </div>
             <div class="flex-1 text-center">
               <span class="team-name-label">Team 1</span><br />
-              <span id="score-3" class="team-score-label">0</span>
+              <span id="score-3" class="team-score-label text-[#c33838]"
+                >0</span
+              >
             </div>
             <div class="flex-1 text-center">
               <span class="team-name-label">Team 1</span><br />
-              <span id="score-4" class="team-score-label">0</span>
+              <span id="score-4" class="team-score-label text-[#d3cd5b]"
+                >0</span
+              >
             </div>
           </div>
         </div>
@@ -396,21 +408,55 @@
         <!-- Game #5 Umfragewerte / Game #10 Multiple Choice /-->
         <div id="game-multiple-choice" class="hidden">
           <h2>Multiple Choice</h2>
-          <div>
+          <div class="flex flex-col items-center">
             <h2
               id="game-multiple-choice-question"
-              class="mt-72! text-[60px]! hidden"
+              class="mt-60! text-[60px]! hidden"
             >
               Wer ist der reichste Europäer?
             </h2>
             <div
               id="game-multiple-choice-answers"
-              class="grid hidden grid-cols-2 gap-8"
+              class="grid hidden grid-cols-2 gap-20 w-7xl"
             >
-              <span class="text-4xl text-center">A: Castrop-Rauxel</span>
-              <span class="text-4xl text-center">B: Castrop-Rauxel</span>
-              <span class="text-4xl text-center">C: Castrop-Rauxel</span>
-              <span class="text-4xl text-center">D: Castrop-Rauxel</span>
+              <div class="text-4xl text-left">
+                <span>A: Peter Maffay</span>
+                <div class="max-w-sm -space-x-3">
+                  <span class="px-2 py-1 text-lg bg-red-600 rounded"
+                    >Titus</span
+                  >
+                  <span class="px-2 py-1 text-lg bg-red-600 rounded"
+                    >Titus</span
+                  >
+                  <span class="px-2 py-1 text-lg bg-red-600 rounded"
+                    >Titus</span
+                  >
+                  <span class="px-2 py-1 text-lg bg-red-600 rounded"
+                    >Titus</span
+                  >
+                </div>
+              </div>
+              <div class="text-4xl text-left">
+                <span>B: Jürgen Schmidt</span>
+                <div class="max-w-sm">
+                  <span class="text-lg">Titus</span>
+                  <span class="text-lg">Titus</span>
+                </div>
+              </div>
+              <div class="text-4xl text-left">
+                <span>C: Alexander Bubatz</span>
+                <div class="max-w-sm">
+                  <span class="text-lg">Titus</span>
+                  <span class="text-lg">Titus</span>
+                </div>
+              </div>
+              <div class="text-4xl text-left">
+                <span>D: Kranius der Ältere</span>
+                <div class="max-w-sm">
+                  <span class="text-lg">Titus</span>
+                  <span class="text-lg">Titus</span>
+                </div>
+              </div>
             </div>
             <div
               id="game-multiple-choice-chart"
@@ -426,24 +472,26 @@
           <h2>Einsortieren</h2>
           <div
             id="game-einsortieren-game"
-            class="flex flex-row w-[50vw] h-[60vh] hidden"
+            class="flex flex-row w-[70vw] h-[60vh] hidden"
           >
             <div class="flex flex-col items-center justify-center flex-1">
-              <span class="mb-10 text-3xl">früh</span>
-              <span>1</span>
-              <div class="px-5 py-1 text-3xl text-black bg-yellow-300 rounded">
-                Hallo Test
-              </div>
-              <span>2</span>
-              <div class="px-5 py-1 text-3xl text-black bg-yellow-300 rounded">
-                Hallo Test
-              </div>
-              <span>3</span>
-              <span class="mt-10 text-3xl">spät</span>
+              <span id="game-einsortieren-ind-up" class="mb-10 text-3xl"
+                >früh</span
+              >
+              <div
+                id="game-einsortieren-sorted-list"
+                class="flex flex-col items-center justify-center"
+              ></div>
+              <span id="game-einsortieren-ind-up" class="mt-10 text-3xl"
+                >spät</span
+              >
             </div>
             <div class="flex flex-col items-end justify-center flex-3">
-              <div class="grid grid-cols-3 gap-4">
-                <div class="px-5 py-1 text-3xl text-black bg-gray-200 rounded">
+              <div
+                id="game-einsortieren-options"
+                class="grid grid-cols-4 gap-4"
+              >
+                <!-- <div class="px-5 py-1 text-3xl text-black bg-gray-200 rounded">
                   Hallo Test
                 </div>
                 <div class="px-5 py-1 text-3xl text-black bg-gray-200 rounded">
@@ -461,6 +509,12 @@
                 <div class="px-5 py-1 text-3xl text-black bg-gray-200 rounded">
                   Hallo Test
                 </div>
+                <div class="px-5 py-1 text-3xl text-black bg-gray-200 rounded">
+                  Hallo Test
+                </div>
+                <div class="px-5 py-1 text-3xl text-black bg-gray-200 rounded">
+                  Hallo Test
+                </div> -->
               </div>
             </div>
           </div>
@@ -477,6 +531,9 @@
         <!-- Game #9 MapFinder  -->
         <div id="game-mapfinder" class="hidden">
           <h2>MapFinder</h2>
+          <h2 id="game-mapfinder-question" class="mt-72! text-[40px]! hidden">
+            Wer ist der reichste Europäer?
+          </h2>
           <div id="map" class="hidden"></div>
         </div>
 
@@ -551,7 +608,7 @@
             <div></div>
             <div
               id="game-teamguessing-question"
-              class="text-center flex flex-col justify-center h-[150px] text-5xl opacity-0"
+              class="game-teamguessing-question text-center flex flex-col justify-center h-[150px] text-5xl opacity-0"
             >
               Wie hoch ist der höchste Berg in Europa?
             </div>
@@ -611,16 +668,19 @@
           </h2>
           <div
             id="game-creative-writing-game"
-            class="grid hidden grid-cols-4 gap-4 mt-56 font-sans text-black max-w-7xl grid-x"
+            class="grid hidden grid-cols-4 gap-4 mt-56 font-sans text-black gap-y-8 gap-y-3 max-w-7xl grid-x"
           >
-            <div class="p-3 text-3xl rounded-lg bg-gray-50">Der Bieromat</div>
+            <div class="flex flex-col">
+              <span class="p-3 mb-3 text-3xl rounded-lg bg-gray-50"
+                >Der Bieromat</span
+              >
+              <div class="text-xl font-semibold text-red-600">
+                Kim &nbsp;&nbsp;&nbsp;👍👍👍👍
+              </div>
+            </div>
             <div class="pl-1 text-3xl bg-gray-50">Säufers Paradise</div>
             <div class="pl-1 text-3xl bg-gray-50">S' Schlückla</div>
             <div class="pl-1 text-3xl bg-gray-50">Hier wird gesoffen</div>
-            <div class="text-xl text-red-600">Kim --- 3</div>
-            <div class="text-xl text-blue-600">Kim --- 3</div>
-            <div class="text-xl text-yellow-600">Kim --- 3</div>
-            <div class="text-xl text-green-600">Kim --- 3</div>
             <div class="pl-1 text-3xl bg-gray-50">Park's Diner Coffee</div>
             <div class="pl-1 text-3xl bg-gray-50">
               Well behaved women never made history
@@ -648,6 +708,7 @@
     <script src="/socket.io/socket.io.js"></script>
     <!-- <script type="text/javascript" src="racegame.js"></script> -->
     <script type="text/javascript" src="panel.js"></script>
+    <script src="snowfall.js"></script>
   </body>
   <style>
     span.letter {
@@ -655,6 +716,56 @@
       opacity: 0; /* Anfang unsichtbar */
       transform: translateY(0);
       animation: jumpFade 0.5s forwards;
+    }
+
+    #games-panel img:nth-child(1) {
+      filter: hue-rotate(0deg);
+    }
+    #games-panel img:nth-child(2) {
+      filter: hue-rotate(30deg);
+    }
+    #games-panel img:nth-child(3) {
+      filter: hue-rotate(60deg);
+    }
+    #games-panel img:nth-child(4) {
+      filter: hue-rotate(90deg);
+    }
+    #games-panel img:nth-child(5) {
+      filter: hue-rotate(120deg);
+    }
+    #games-panel img:nth-child(6) {
+      filter: hue-rotate(150deg);
+    }
+    #games-panel img:nth-child(7) {
+      filter: hue-rotate(180deg);
+    }
+    #games-panel img:nth-child(8) {
+      filter: hue-rotate(210deg);
+    }
+    #games-panel img:nth-child(9) {
+      filter: hue-rotate(240deg);
+    }
+    #games-panel img:nth-child(10) {
+      filter: hue-rotate(270deg);
+    }
+    #games-panel img:nth-child(11) {
+      filter: hue-rotate(300deg);
+    }
+    #games-panel img:nth-child(12) {
+      filter: hue-rotate(330deg);
+    }
+    /* Für 13–16 wiederholen wir oder wählen eigene Werte */
+    #games-panel img:nth-child(13) {
+      filter: hue-rotate(15deg);
+    }
+    #games-panel img:nth-child(14) {
+      filter: hue-rotate(45deg);
+    }
+    #games-panel img:nth-child(15) {
+      filter: hue-rotate(75deg);
+    }
+    #games-panel img:nth-child(16) {
+      filter: hue-rotate(105deg);
     }
 
     @keyframes jumpFade {
@@ -765,7 +876,7 @@
     }
 
     .grayscale {
-      filter: grayscale(100%);
+      filter: grayscale(100%) !important;
       transition: filter 0.3s;
     }
 
@@ -951,6 +1062,8 @@
           panel.classList.remove('grid-grow-shrink');
           panel.classList.add('hidden'); // Grid verstecken
           img.classList.add('grayscale');
+          img.classList.remove('opacity-100');
+          img.classList.add('opacity-25');
           panel.removeEventListener('animationend', handleGrid);
           gameStartAnimation();
         });
@@ -960,7 +1073,8 @@
     function gameStartAnimation() {
       changeView(true);
       return;
-      document.getElementById('animated-game-name').textContent = currentGame;
+      document.getElementById('animated-game-name').textContent =
+        quizData[currentGame].title;
       setTimeout(() => {
         animateGameName();
         setTimeout(() => {
@@ -980,7 +1094,10 @@
     });
 
     function animateGameName() {
-      changeView(-3);
+      let currentGameTmp = currentGame;
+      currentGame = 'game-name';
+      changeView(true);
+      currentGame = currentGameTmp;
       // ANimate Game Name
       const header = document.getElementById('animated-game-name');
       const text = header.textContent;
@@ -1046,64 +1163,6 @@
         default:
           break;
       }
-      // switch (num) {
-      //   case -3:
-      //     currentViewID = 'game-name';
-      //     break;
-      //   case -2:
-      //     currentViewID = 'leaderboard';
-      //     break;
-      //   case -1:
-      //     currentViewID = 'points-panel';
-      //     break;
-      //   case 0:
-      //     currentViewID = 'games-panel';
-      //     break;
-      //   case 1:
-      //   case 2:
-      //   case 3:
-      //   case 4:
-      //     currentViewID = 'game-quiz-question';
-      //     break;
-      //   case 5:
-      //     currentViewID = 'game-multiple-choice';
-      //     break;
-      //   case 6:
-      //     currentViewID = 'game-einsortieren';
-      //     break;
-      //   case 7:
-      //     currentViewID = 'game-pantomime';
-      //     break;
-      //   case 8:
-      //     currentViewID = 'game-kategorie';
-      //     break;
-      //   case 9:
-      //     currentViewID = 'game-mapfinder';
-      //     break;
-      //   case 10:
-      //     currentViewID = 'game-whoisthis';
-      //     break;
-      //   case 11:
-      //     currentViewID = 'game-songs';
-      //     break;
-      //   case 12:
-      //     currentViewID = 'game-teamguessing';
-      //     break;
-      //   case 13:
-      //     currentViewID = 'game-multiple-choice';
-      //     break;
-      //   case 14:
-      //     currentViewID = 'game-creative-writing';
-      //     break;
-      //   case 15:
-      //     currentViewID = 'game-blamieren-kassieren';
-      //     break;
-      //   case 16:
-      //     currentViewID = 'game-teamguessing';
-      //     break;
-      //   default:
-      //     break;
-      // }
 
       let gameContainer = document.getElementById('game-container');
 
@@ -1117,6 +1176,17 @@
           document
             .querySelectorAll('#game-container > div')
             .forEach((el) => el.classList.add('hidden'));
+
+          // reset views of games
+          document
+            .querySelectorAll('[id^="game-multiple-choice-"]')
+            .forEach((elem) => elem.classList.add('hidden'));
+          document
+            .querySelectorAll('[class^="game-teamguessing-"]')
+            .forEach((elem) => {
+              elem.classList.add('opacity-0');
+              elem.classList.remove('opacity-100');
+            });
 
           document.getElementById(view).classList.remove('hidden');
         } else {
@@ -1138,7 +1208,16 @@
       //   map.invalidateSize();
     }
 
-    currentGame = games[4];
+    currentGame = 'game-creative-writing';
+    currentGameState = 0;
     changeView(true);
+    setTimeout(() => {
+      document
+        .querySelectorAll('[id^="game-creative-writing-"]')
+        .forEach((elem) => elem.classList.remove('hidden'));
+      document
+        .querySelector('#game-creative-writing-prompt')
+        .classList.add('hidden');
+    }, 1000);
   </script>
 </html>

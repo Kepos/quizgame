@@ -118,6 +118,12 @@ io.on('connection', (sock) => {
     callback({ status: 'ok' });
   });
 
+  sock.on('sort-selection', (selection, callback) => {
+    console.log(selection);
+    io.emit('sort-selection', selection);
+    callback({ status: 'ok' });
+  });
+
   sock.on('signup', (player) => {
     if (!acceptNewPlayers) {
       sock.emit('nosignup');
@@ -361,12 +367,12 @@ io.on('connection', (sock) => {
             // Show Question
             callback({
               status: 'ok',
-              nextUp: 'Show Results',
+              nextUp: '(...) Show Results',
             });
             currentGameState++;
             break;
           case 1:
-            // Show Results
+            // Show Answers
             callback({
               status: 'ok',
               nextUp: 'Show Correct Result',
@@ -374,7 +380,7 @@ io.on('connection', (sock) => {
             currentGameState++;
             break;
           case 2:
-            // Show Results
+            // Show Correct Result
             callback({
               status: 'ok',
               nextUp: 'Show Averages',
@@ -383,6 +389,14 @@ io.on('connection', (sock) => {
             break;
           case 3:
             // Show Averages
+            callback({
+              status: 'ok',
+              nextUp: 'Show Winner',
+            });
+            currentGameState++;
+            break;
+          case 4:
+            // Show Winner
             callback({
               status: 'ok',
               nextUp: 'Next Question',

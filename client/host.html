@@ -23,7 +23,10 @@
     <div
       class="flex flex-col items-center justify-start h-full pt-56 game-container"
     >
-      <h1 class="absolute top-20" onclick="onBackToPanelButtonClicked()">
+      <h1
+        class="absolute cursor-pointer top-20"
+        onclick="onBackToPanelButtonClicked()"
+      >
         o holy<br />
         <span class="text-[#d5d514]"
           >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gamenight!</span
@@ -145,7 +148,9 @@
             id="games-panel"
             class="flex flex-col items-center hidden max-w-5xl"
           >
-            <div class="grid max-w-5xl grid-cols-4 gap-4 p-5 h-fit">
+            <div
+              class="grid max-w-5xl grid-cols-4 gap-4 p-5 cursor-pointer h-fit"
+            >
               <img
                 src="./assets/CueCard.png"
                 alt="Bild 1"
@@ -407,13 +412,16 @@
           <!-- Game #6 Sortieren -->
           <div id="game-einsortieren" class="hidden">
             <div class="flex flex-col space-y-4">
-              <div class="p-2 text-black bg-yellow-400 rounded">Test</div>
-              <div class="p-2 text-black bg-yellow-400 rounded">Test</div>
-              <div class="p-2 text-black bg-yellow-400 rounded">Test</div>
-              <div class="p-2 text-black bg-yellow-400 rounded">Test</div>
-              <div class="p-2 text-black bg-yellow-400 rounded">Test</div>
-              <div class="p-2 text-black bg-yellow-400 rounded">Test</div>
-              <div class="p-2 text-black bg-yellow-400 rounded">Test</div>
+              <select
+                id="sort-element-selection"
+                class="p-2 mt-5 text-black bg-white rounded-lg"
+              ></select>
+              <button
+                class="text-black bg-yellow-300 cursor-pointer"
+                onclick="onSelectionSendButtonClicked()"
+              >
+                Senden
+              </button>
             </div>
           </div>
 
@@ -430,16 +438,8 @@
           <!-- Game #12 TeamGuessing -->
           <div id="game-teamguessing" class="hidden"></div>
 
-          <!-- Game #13 Multiple Choice / Game #2 Umfragewerte -->
-          <div id="game-multiple-choice" class="hidden">
-            <h2 class="mt-72! text-[60px]!">Wer ist der reichste Europäer?</h2>
-            <div class="grid grid-cols-2 gap-8">
-              <span class="text-4xl text-center">A: Castrop-Rauxel</span>
-              <span class="text-4xl text-center">B: Castrop-Rauxel</span>
-              <span class="text-4xl text-center">C: Castrop-Rauxel</span>
-              <span class="text-4xl text-center">D: Castrop-Rauxel</span>
-            </div>
-          </div>
+          <!-- Game #13 Multiple Choice  -->
+          <div id="game-multiple-choice" class="hidden"></div>
 
           <!-- Game #14 Creative Writing -->
           <div id="game-creative-writing" class="hidden"></div>

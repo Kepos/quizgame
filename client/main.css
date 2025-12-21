@@ -60,6 +60,10 @@ body {
   background-attachment: fixed;
 }
 
+input::placeholder {
+  font-size: 20px;
+}
+
 .team-name-label {
   font-size: 25px;
   font-family: 'Monotalic';
@@ -70,4 +74,12 @@ body {
   font-size: 50px;
   font-family: 'Monotalic';
   font-weight: bold;
+}
+
+.custom-marker div {
+  width: 16px;
+  height: 16px;
+  background: #e11d48; /* rot */
+  border-radius: 50%;
+  border: 2px solid white;
 }

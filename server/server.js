@@ -7,9 +7,15 @@ const app = express();
 
 app.use(express.static(`${__dirname}/../client`, { index: 'player.html' }));
 
+// Questions-Ordner freigeben
+app.use('/questions', express.static(`${__dirname}/../questions`));
+
 const server = http.createServer(app);
 const io = socketio(server);
 // const { addPlayer, addMove, getMoves, setTrack, getTrack, restart } = createGame();
+
+// Get JSON Data
+const quizData = require('../questions/questions.json').gameQuestions;
 
 let admin;
 let players = [];
@@ -37,10 +43,10 @@ let currentGame = 'panel';
 let currentGameState = 0;
 
 let teams = [
-  { points: 0, members: [] },
-  { points: 0, members: [] },
-  { points: 0, members: [] },
-  { points: 0, members: [] },
+  { points: 0, members: new Map(), color: '#ce5bd3' },
+  { points: 0, members: new Map(), color: '#5bd35b' },
+  { points: 0, members: new Map(), color: '#c33838' },
+  { points: 0, members: new Map(), color: '#d3cd5b' },
 ];
 
 function getNextFreeIndex() {
@@ -67,6 +73,7 @@ function allPlayersSelectedNextMove() {
 io.on('connection', (sock) => {
   const playerID = sock.id;
   let playerIndex;
+  let playerTeam;
 
   console.log('someone connected:', playerID);
   sock.emit('message', 'You are connected!!');
@@ -89,18 +96,110 @@ io.on('connection', (sock) => {
 
   sock.on('Login', (playerObj, callback) => {
     console.log(`new player: ${playerObj.name} ${playerObj.team}`);
-    console.log(callback);
-    teams[playerObj.team].members.push(playerObj.name);
+    const newPlayer = {
+      id: playerID,
+      name: playerObj.name,
+      answer: '',
+      points: 0,
+      ping: 0,
+    };
+    teams[playerObj.team].members.set(playerID, newPlayer);
+    playerTeam = playerObj.team;
     console.log(teams[playerObj.team]);
+    console.log(currentGame, currentGameState);
     callback({
       status: 'ok',
+      game: currentGame,
+      gamestate: currentGameState,
     });
+
+    emitTeams();
+  });
+
+  function emitTeams() {
+    const teamsForClient = teams.map((team) => ({
+      ...team,
+      members: Object.fromEntries(team.members), // Map -> Objekt
+    }));
+    io.emit('Login', teamsForClient);
+  }
+
+  sock.on('player-answer', (payload, game, gamestate, callback) => {
+    console.log(
+      `new answer: ${teams[playerTeam]?.members.get(playerID).name}: ${[
+        game == currentGame,
+        gamestate == currentGameState,
+      ]}`,
+      payload
+    );
+
+    const player = teams[playerTeam]?.members?.get(playerID);
+
+    if (player && game == currentGame && gamestate == currentGameState) {
+      switch (currentGame) {
+        case 'game-multiple-choice':
+          if (!Array.isArray(player.answer)) {
+            player.answer = [];
+          }
+          player.answer.push(payload);
+          break;
+        case 'game-creative-writing':
+          switch (currentGameState) {
+            case 2:
+              // Increment points of the given answers author
+              break;
+          }
+        default:
+          player.answer = payload;
+          break;
+      }
+      emitTeams();
+      callback({
+        status: 'ok',
+      });
+    }
+
+    console.log(player);
+  });
+
+  sock.on('player-answer-delete', (teamindex, id, callback) => {
+    const member = teams[teamindex]?.members?.get(id);
+    if (member) {
+      member.answer = '';
+      callback({
+        status: 'ok',
+      });
+      io.to(id).emit('player-game-state', currentGame, currentGameState);
+    }
+  });
+
+  sock.on('player-delete', (teamindex, id, callback) => {
+    if (teams[teamindex]?.members?.delete(id)) {
+      callback({
+        status: 'ok',
+      });
+      emitTeams();
+      io.to(id).emit('player-game-state', 'login-screen', 0);
+    }
   });
 
   sock.on('new-game', (newGame, callback) => {
     console.log(`start new Game, ${newGame}`);
     currentGame = newGame;
     currentGameState = 0;
+
+    // Init Game Data
+    // switch (currentGame) {
+    //   case 'game-multiple-choice':
+    //     teams.forEach((team) => {
+    //       team.members.forEach((member) => {
+    //         // Make Answer property an array
+    //         member.answer = [];
+    //       });
+    //     });
+    //     break;
+    // }
+
     io.emit('new-game', newGame);
     callback({
       status: 'ok',
@@ -124,19 +223,20 @@ io.on('connection', (sock) => {
     callback({ status: 'ok' });
   });
 
-  sock.on('signup', (player) => {
-    if (!acceptNewPlayers) {
-      sock.emit('nosignup');
-      return;
-    }
-    console.log(`new player: ${player.name} ${player.car}`);
-    playerIndex = players.length;
-    players.push(playerID);
-    playerObjs[playerIndex] = player;
-    sock.emit('playerindex', playerIndex);
-    player.index = playerIndex;
-    io.emit('newPlayer', playerObjs);
-  });
+  // sock.on('signup', (player) => {
+  //   if (!acceptNewPlayers) {
+  //     sock.emit('nosignup');
+  //     return;
+  //   }
+  //   console.log(`new player: ${player.name} ${player.car}`);
+  //   console.log(currentGame, currentGameState);
+  //   playerIndex = players.length;
+  //   players.push(playerID);
+  //   playerObjs[playerIndex] = player;
+  //   sock.emit('playerindex', playerIndex);
+  //   player.index = playerIndex;
+  //   io.emit('newPlayer', playerObjs);
+  // });
 
   sock.on('disconnect', (reason) => {
     console.log('player disconnected: ', playerID);
@@ -199,6 +299,10 @@ io.on('connection', (sock) => {
     }, 2000);
   });
 
+  function emitCurrentState() {
+    io.emit('player-game-state', currentGame, currentGameState);
+  }
+
   sock.on('next', (payload, callback) => {
     console.log(payload);
 
@@ -235,17 +339,36 @@ io.on('connection', (sock) => {
             // Show Question
             callback({
               status: 'ok',
-              nextUp: 'Show Answers',
+              nextUp: '(...) Show Answers',
             });
             currentGameState++;
+            emitCurrentState();
             break;
           case 1:
             //Show Answers
+            let votes = {
+              yes: 0,
+              no: 0,
+            };
+            teams.forEach((team) => {
+              team.members.forEach((member) => {
+                if (member.answer === true) {
+                  votes.yes++;
+                }
+                if (member.answer === false) {
+                  votes.no++;
+                }
+              });
+            });
+            payload = votes;
+
             callback({
               status: 'ok',
               nextUp: 'Next Question',
             });
+
             currentGameState = 0;
+            emitCurrentState();
             break;
         }
         break;
@@ -304,17 +427,32 @@ io.on('connection', (sock) => {
             // Show Question
             callback({
               status: 'ok',
-              nextUp: 'Show Markers',
+              nextUp: '(...) Show Markers',
             });
             currentGameState++;
+            emitCurrentState();
             break;
           case 1:
             // Show Markers
+            let markers = [];
+            teams.forEach((team, index) => {
+              team.members.forEach((member) => {
+                if (member.answer) {
+                  markers.push({
+                    name: member.name,
+                    team: index,
+                    latlng: member.answer,
+                  });
+                }
+              });
+            });
+            payload = markers;
             callback({
               status: 'ok',
               nextUp: 'Show Correct Marker',
             });
             currentGameState++;
+            emitCurrentState();
             break;
           case 2:
             // Show Correct Marker
@@ -370,6 +508,7 @@ io.on('connection', (sock) => {
               nextUp: '(...) Show Results',
             });
             currentGameState++;
+            emitCurrentState();
             break;
           case 1:
             // Show Answers
@@ -378,6 +517,7 @@ io.on('connection', (sock) => {
               nextUp: 'Show Correct Result',
             });
             currentGameState++;
+            emitCurrentState();
             break;
           case 2:
             // Show Correct Result
@@ -408,22 +548,40 @@ io.on('connection', (sock) => {
 
       // Game no 13
       case 'game-multiple-choice':
-        if (payload == 1) currentGameState = 1;
         switch (currentGameState) {
           case 0:
             // Show Question
             callback({
               status: 'ok',
-              nextUp: 'Show Results',
+              nextUp: 'Show Answer-Options',
             });
             currentGameState++;
             break;
           case 1:
-            // Show Results
+            // Show Answer-Options
             callback({
               status: 'ok',
-              nextUp: 'Show Team Points',
+              nextUp: '(...) Show Votes',
             });
+            currentGameState++;
+            emitCurrentState();
+            break;
+          case 2:
+            // Show Votes
+            callback({
+              status: 'ok',
+              nextUp: 'Show Correct Answer',
+            });
+            currentGameState++;
+            emitCurrentState();
+            break;
+          case 3:
+            // Show Correct Answer
+            callback({
+              status: 'ok',
+              nextUp: 'Next Question',
+            });
+            currentGameState = 0;
             break;
         }
         break;
@@ -435,17 +593,19 @@ io.on('connection', (sock) => {
             // Show Prompt
             callback({
               status: 'ok',
-              nextUp: 'Show Answers',
+              nextUp: '(...) Show Answers',
             });
             currentGameState++;
+            emitCurrentState();
             break;
           case 1:
             // Show Answers
             callback({
               status: 'ok',
-              nextUp: 'Show Votes',
+              nextUp: '(...) Show Votes',
             });
             currentGameState++;
+            emitCurrentState();
             break;
           case 2:
             // Show Votes
@@ -454,6 +614,7 @@ io.on('connection', (sock) => {
               nextUp: 'Show Next Prompt',
             });
             currentGameState = 0;
+            emitCurrentState();
             break;
         }
         break;

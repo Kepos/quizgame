@@ -31,12 +31,24 @@ document.querySelectorAll('img[data-game]').forEach((img) => {
 let quizData;
 
 async function loadQuizData() {
-  const response = await fetch('questions/questions.json');
+  const response = await fetch('../questions/questions.json');
   const data = await response.json();
 
   quizData = data.gameQuestions;
 }
 loadQuizData();
+
+// Key Press Events
+document.addEventListener('keydown', function (event) {
+  switch (event.key) {
+    case '1':
+    case '2':
+    case '3':
+    case '4':
+      incrementScore(`team-points-input-${event.key}`, 1);
+      break;
+  }
+});
 
 // unused
 const onChatSubmitted = (sock) => (e) => {
@@ -64,7 +76,15 @@ function onNextButtonClicked(payload) {
   sock.emit('next', payload, (response) => {
     if (response.status == 'ok') {
       setCurrentGameView();
-      document.getElementById('nextButton').textContent = response.nextUp;
+      let nextButton = document.getElementById('nextButton');
+      nextButton.textContent = response.nextUp;
+      // prevent accidental double click
+      nextButton.disabled = true;
+      nextButton.classList.add('opacity-50');
+      setTimeout(() => {
+        nextButton.disabled = false;
+        nextButton.classList.remove('opacity-50');
+      }, 700);
     }
   });
 }
@@ -106,10 +126,12 @@ function setSelectionOptions() {
   let sortIndex = 1;
   optionsArray.forEach((text, index) => {
     if (text == startWord) {
-      if (index > 0) {
-        sortIndex++;
+      if (index == 0) {
+        return;
       }
-      return;
+      if (!sentOptions.includes(text)) {
+        sentOptions.push(text);
+      }
     }
     const opt = document.createElement('option');
     opt.value = text;
@@ -137,7 +159,66 @@ function setSelectionOptions() {
   });
 
   sock.on('Buzzer', (name) => {
-    document.getElementById('namelabel').innerHTML = name + ' buzzered!';
+    document.getElementById('buzzer-namelabel').innerHTML =
+      name + '<br/>buzzered!';
+    document.getElementById('buzzer').classList.remove('hidden');
+    setTimeout(() => {
+      document.getElementById('buzzer').classList.add('hidden');
+    }, 3000);
+  });
+
+  sock.on('Login', (allTeams) => {
+    console.log(allTeams);
+    const table = document.getElementById('player-table');
+    table.innerHTML = '';
+
+    allTeams.forEach((team, teamindex) => {
+      Object.values(team.members).forEach((member) => {
+        const tr = document.createElement('tr');
+        tr.className = `bg-[${team.color}]`;
+        [
+          '#' + member.id.slice(0, 3),
+          member.name,
+          member.ping,
+          member.answer !== '' ? '✅' : '',
+        ].forEach((item, index) => {
+          const td = document.createElement('td');
+          td.className = `px-4 py-2 text-left text-black`;
+          td.textContent = item;
+
+          if (index == 0) {
+            td.classList.add('text-gray-700');
+            td.classList.remove('text-black');
+            td.onclick = () => {
+              sock.emit('player-delete', teamindex, member.id, (response) => {
+                if (response.status === 'ok') {
+                  tr.remove();
+                }
+              });
+            };
+            td.classList.add('cursor-pointer');
+          } else if (index == 3) {
+            td.onclick = () => {
+              sock.emit(
+                'player-answer-delete',
+                teamindex,
+                member.id,
+                (response) => {
+                  if (response.status === 'ok') {
+                    td.textContent = '';
+                  }
+                }
+              );
+            };
+            td.classList.add('cursor-pointer');
+          }
+
+          tr.appendChild(td);
+        });
+
+        table.appendChild(tr);
+      });
+    });
   });
 
   sock.on('restart', () => {

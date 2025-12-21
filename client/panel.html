@@ -48,6 +48,7 @@
           />
           <!-- Unbeweglicher Text -->
           <div
+            id="buzzer-namelabel"
             class="absolute font-bold -rotate-7 inset-0 flex items-center justify-center text-black font-[Monotalic] text-3xl text-center pointer-events-none"
           >
             Titus<br />buzzered!
@@ -225,19 +226,19 @@
               >
             </div>
             <div class="flex-1 text-center">
-              <span class="team-name-label">Team Suff000</span><br />
+              <span class="team-name-label">Team 2</span><br />
               <span id="score-2" class="team-score-label text-[#5bd35b]"
                 >0</span
               >
             </div>
             <div class="flex-1 text-center">
-              <span class="team-name-label">Team 1</span><br />
+              <span class="team-name-label">Team 3</span><br />
               <span id="score-3" class="team-score-label text-[#c33838]"
                 >0</span
               >
             </div>
             <div class="flex-1 text-center">
-              <span class="team-name-label">Team 1</span><br />
+              <span class="team-name-label">Team 4</span><br />
               <span id="score-4" class="team-score-label text-[#d3cd5b]"
                 >0</span
               >
@@ -411,7 +412,7 @@
           <div class="flex flex-col items-center">
             <h2
               id="game-multiple-choice-question"
-              class="mt-60! text-[60px]! hidden"
+              class="mt-40! text-[60px]! hidden"
             >
               Wer ist der reichste Europäer?
             </h2>
@@ -421,7 +422,9 @@
             >
               <div class="text-4xl text-left">
                 <span>A: Peter Maffay</span>
-                <div class="max-w-sm -space-x-3">
+                <div
+                  class="hidden max-w-sm -space-x-3 game-multiple-choice-votes"
+                >
                   <span class="px-2 py-1 text-lg bg-red-600 rounded"
                     >Titus</span
                   >
@@ -460,7 +463,7 @@
             </div>
             <div
               id="game-multiple-choice-chart"
-              class="hidden mt-20 h-[600px] w-[1000px]"
+              class="hidden mt-8 h-[600px] w-[1000px]"
             >
               <canvas id="myChart"></canvas>
             </div>
@@ -946,6 +949,9 @@
     //     }
     //   ).addTo(map);
     var marker;
+    var markers = L.layerGroup().addTo(map);
+    map.addLayer(markers);
+
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 7,
       attribution:
@@ -970,10 +976,7 @@
       //     // '<span class="my-div-span">Titus</span>',
       //   }),
       // });
-      marker = L.marker(e.latlng).bindTooltip('Kimbo', {
-        permanent: true,
-        direction: 'right',
-      });
+      marker = L.marker(e.latlng);
       map.addLayer(marker);
     });
 
@@ -1157,6 +1160,9 @@
         case 'game-umfragewerte':
           view = 'game-multiple-choice';
           break;
+        case 'game-kategorie':
+          view = 'game-pantomime';
+          break;
         case 'game-mitspieler':
           view = 'game-teamguessing';
           break;
@@ -1208,16 +1214,16 @@
       //   map.invalidateSize();
     }
 
-    currentGame = 'game-creative-writing';
+    currentGame = 'games-panel';
     currentGameState = 0;
     changeView(true);
-    setTimeout(() => {
-      document
-        .querySelectorAll('[id^="game-creative-writing-"]')
-        .forEach((elem) => elem.classList.remove('hidden'));
-      document
-        .querySelector('#game-creative-writing-prompt')
-        .classList.add('hidden');
-    }, 1000);
+    // setTimeout(() => {
+    //   document
+    //     .querySelectorAll('[id^="game-creative-writing-"]')
+    //     .forEach((elem) => elem.classList.remove('hidden'));
+    //   document
+    //     .querySelector('#game-creative-writing-prompt')
+    //     .classList.add('hidden');
+    // }, 1000);
   </script>
 </html>

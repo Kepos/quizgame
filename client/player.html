@@ -39,6 +39,7 @@
         <!-- <input class="mb-5 bg-white" id="nameinput" type="text" /> -->
         <button
           class="bg-red-600 select-none active:bg-red-700 active:scale-90 active:border-5 active:text-yellow-500 -mt-32 text-xl text-white border-8 border-red-500 cursor-pointer rounded-[200px] w-64 h-64 play-button"
+          onclick="onBuzzerClicked()"
         >
           Buzzer
         </button>
@@ -71,43 +72,105 @@
         <button
           id="login-button"
           class="w-full text-2xl text-black p-3 rounded-2xl bg-[#ce5bd3] mt-10 mb-10"
+          onclick="onLoginButtonClicked()"
         >
           Einloggen
         </button>
       </div>
 
-      <!-- Game #2 Umfragewerte -->
+      <!-- Game #5 Umfragewerte -->
       <div id="game-umfragewerte" class="hidden font-[Monotalic]">
         <span class="inline-block mt-20 mb-12 text-3xl">Bist du ein Affe?</span>
         <button
           class="w-full p-5 mb-10 text-2xl bg-green-800 border-green-400 border-3 rounded-2xl"
+          onclick="onAnswerButtonClicked(true)"
         >
           Ja
         </button>
         <button
           class="w-full p-5 text-2xl bg-red-900 border-red-400 border-3 rounded-2xl"
+          onclick="onAnswerButtonClicked(false)"
         >
           Nein
         </button>
       </div>
 
-      <!-- Game #11 Creative Writing -->
+      <!-- Game #9 MapFinder -->
+      <div id="game-mapfinder" class="hidden font-[Monotalic] w-full">
+        <span class="inline-block mb-8 text-3xl">MapFinder</span>
+        <div id="map"></div>
+        <button
+          class="w-full text-2xl text-black p-3 rounded-2xl bg-[#ce5bd3] mt-10 mb-10"
+          onclick="onAnswerButtonClicked()"
+        >
+          Absenden
+        </button>
+      </div>
+
+      <!-- Game #12 TeamGuessing -->
+      <div id="game-teamguessing" class="hidden font-[Monotalic] w-full">
+        <span class="inline-block mb-8 text-3xl"
+          >Wieviel wiegt ein Elefant?</span
+        >
+        <input
+          type="number"
+          placeholder="Enter your answer..."
+          class="w-full text-5xl text-center text-black bg-white rounded-2xl"
+          id="player-text-answer-input"
+        />
+        <button
+          class="w-full text-2xl text-black p-3 rounded-2xl bg-[#ce5bd3] mt-10 mb-10"
+          onclick="onAnswerButtonClicked(document.getElementById('player-text-answer-input').value)"
+        >
+          Absenden
+        </button>
+      </div>
+
+      <!-- Game #13 Multiple Choice -->
+      <div id="game-multiple-choice" class="hidden">
+        <span class="inline-block mb-12 text-3xl">WER IST DER KING?</span>
+        <button
+          class="w-full p-5 mb-4 text-2xl text-left text-black bg-yellow-300 border-yellow-100 border-3 rounded-2xl"
+          onclick="onAnswerButtonClicked(0)"
+        >
+          A: Niemand
+        </button>
+        <button
+          class="w-full p-5 mb-4 text-2xl text-left text-black bg-yellow-300 border-yellow-100 border-3 rounded-2xl"
+          onclick="onAnswerButtonClicked(1)"
+        >
+          B: Du
+        </button>
+        <button
+          class="w-full p-5 mb-4 text-2xl text-left text-black bg-yellow-300 border-yellow-100 border-3 rounded-2xl"
+          onclick="onAnswerButtonClicked(2)"
+        >
+          C: Ich
+        </button>
+        <button
+          class="w-full p-5 mb-4 text-2xl text-left text-black bg-yellow-300 border-yellow-100 border-3 rounded-2xl"
+          onclick="onAnswerButtonClicked(3)"
+        >
+          D: Deine Mudder
+        </button>
+      </div>
+
+      <!-- Game #14 Creative Writing -->
       <div id="game-creative-writing" class="hidden font-[Monotalic] w-full">
         <div class="flex flex-col w-full space-y-2">
           <label class="cursor-pointer">
             <input type="radio" name="word" class="hidden peer" />
             <span
-              class="block px-4 py-2 border rounded-md peer-checked:ring-2 peer-checked:ring-yellow-400 hover:ring-2 hover:ring-yellow-200"
+              class="block px-4 py-2 border rounded-md peer-checked:ring-2 peer-checked:ring-yellow-400 peer-checked:bg-yellow-400 peer-checked:text-black"
             >
-              Deine Mudder wird niemals verstehen was das Problem dabei ist
-              alter
+              Erdbeere
             </span>
           </label>
 
           <label class="cursor-pointer">
             <input type="radio" name="word" class="hidden peer" />
             <span
-              class="block px-4 py-2 border rounded-md peer-checked:ring-2 peer-checked:ring-yellow-400 hover:ring-2 hover:ring-yellow-200"
+              class="block px-4 py-2 border rounded-md peer-checked:ring-2 peer-checked:ring-yellow-400 peer-checked:bg-yellow-400 peer-checked:text-black"
             >
               Banane
             </span>
@@ -116,7 +179,7 @@
           <label class="cursor-pointer">
             <input type="radio" name="word" class="hidden peer" />
             <span
-              class="block px-4 py-2 border rounded-md peer-checked:ring-2 peer-checked:ring-yellow-400 hover:ring-2 hover:ring-yellow-200"
+              class="block px-4 py-2 border rounded-md peer-checked:ring-2 peer-checked:ring-yellow-400 peer-checked:bg-yellow-400 peer-checked:text-black"
             >
               Kirsche
             </span>
@@ -125,104 +188,17 @@
           <label class="cursor-pointer">
             <input type="radio" name="word" class="hidden peer" />
             <span
-              class="block px-4 py-2 border rounded-md peer-checked:ring-2 peer-checked:ring-yellow-400 hover:ring-2 hover:ring-yellow-200"
+              class="block px-4 py-2 border rounded-md peer-checked:ring-2 peer-checked:ring-yellow-400 peer-checked:bg-yellow-400 peer-checked:text-black"
             >
-              Orange
-            </span>
-          </label>
-
-          <label class="cursor-pointer">
-            <input type="radio" name="word" class="hidden peer" />
-            <span
-              class="block px-4 py-2 border rounded-md peer-checked:ring-2 peer-checked:ring-yellow-400 hover:ring-2 hover:ring-yellow-200"
-            >
-              Melone
-            </span>
-          </label>
-
-          <label class="cursor-pointer">
-            <input type="radio" name="word" class="hidden peer" />
-            <span
-              class="block px-4 py-2 border rounded-md peer-checked:ring-2 peer-checked:ring-yellow-400 hover:ring-2 hover:ring-yellow-200"
-            >
-              Traube
-            </span>
-          </label>
-
-          <label class="cursor-pointer">
-            <input type="radio" name="word" class="hidden peer" />
-            <span
-              class="block px-4 py-2 border rounded-md peer-checked:ring-2 peer-checked:ring-yellow-400 hover:ring-2 hover:ring-yellow-200"
-            >
-              Pfirsich
-            </span>
-          </label>
-
-          <label class="cursor-pointer">
-            <input type="radio" name="word" class="hidden peer" />
-            <span
-              class="block px-4 py-2 border rounded-md peer-checked:ring-2 peer-checked:ring-yellow-400 hover:ring-2 hover:ring-yellow-200"
-            >
-              Birne
+              Kirsche
             </span>
           </label>
         </div>
         <button
           class="w-full text-2xl text-black p-3 rounded-2xl bg-[#ce5bd3] mt-10 mb-10"
+          onclick="onAnswerButtonClicked()"
         >
           Absenden
-        </button>
-      </div>
-
-      <!-- Game #6 MapFinder -->
-      <div id="game-mapfinder" class="hidden font-[Monotalic] w-full">
-        <span class="inline-block mb-8 text-3xl">MapFinder</span>
-        <div id="map"></div>
-        <button
-          class="w-full text-2xl text-black p-3 rounded-2xl bg-[#ce5bd3] mt-10 mb-10"
-        >
-          Absenden
-        </button>
-      </div>
-
-      <!-- Game #9 TeamGuessing -->
-      <div id="game-teamguessing" class="hidden font-[Monotalic] w-full">
-        <span class="inline-block mb-8 text-3xl"
-          >Wieviel wiegt ein Elefant?</span
-        >
-        <input
-          type="number"
-          class="w-full text-5xl text-center text-black bg-white rounded-2xl"
-        />
-        <button
-          class="w-full text-2xl text-black p-3 rounded-2xl bg-[#ce5bd3] mt-10 mb-10"
-        >
-          Absenden
-        </button>
-      </div>
-
-      <!-- Game #10 Multiple Choice -->
-      <div id="game-multiple-choice" class="hidden">
-        <span class="inline-block mb-12 text-3xl">WER IST DER KING?</span>
-        <button
-          class="w-full p-5 mb-4 text-2xl text-left text-black bg-yellow-300 border-yellow-100 border-3 rounded-2xl"
-        >
-          A: Niemand
-        </button>
-        <button
-          class="w-full p-5 mb-4 text-2xl text-left text-black bg-yellow-300 border-yellow-100 border-3 rounded-2xl"
-        >
-          B: Du
-        </button>
-        <button
-          class="w-full p-5 mb-4 text-2xl text-left text-black bg-yellow-300 border-yellow-100 border-3 rounded-2xl"
-        >
-          C: Ich
-        </button>
-        <button
-          class="w-full p-5 mb-4 text-2xl text-left text-black bg-yellow-300 border-yellow-100 border-3 rounded-2xl"
-        >
-          D: Deine Mudder
         </button>
       </div>
     </div>
@@ -240,6 +216,8 @@
   </style>
   <script>
     var map;
+    var marker;
+    let markerLocation;
 
     function setMap() {
       // Map init
@@ -250,7 +228,6 @@
       //       attribution: '',
       //     }
       //   ).addTo(map);
-      var marker;
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 7,
         attribution:
@@ -264,6 +241,7 @@
       //   ).addTo(map);
       map.on('click', function (e) {
         if (marker) map.removeLayer(marker);
+        markerLocation = e.latlng;
 
         console.log(e.latlng.lat, e.latlng.lng);
         //marker = new L.Marker(e.latlng, { draggable: true });
@@ -275,10 +253,7 @@
         //     // '<span class="my-div-span">Titus</span>',
         //   }),
         // });
-        marker = L.marker(e.latlng).bindTooltip('Kimbo', {
-          permanent: true,
-          direction: 'right',
-        });
+        marker = L.marker(e.latlng);
         map.addLayer(marker);
       });
 
@@ -289,75 +264,70 @@
 
     setMap();
 
-    let CURRENT_VIEW = 0;
-    let currentViewID = '';
-
-    function changeView(num) {
-      CURRENT_VIEW = num;
-      switch (num) {
-        case -3:
-          currentViewID = 'buzzer';
+    function changeView() {
+      let view = 'waiting-screen';
+      switch (currentGame) {
+        case 'game-kategorie':
+        case 'game-whoisthis':
+        case 'game-songs':
+        case 'game-blamieren-kassieren':
+          view = 'buzzer';
           break;
-        case -2:
-          currentViewID = 'login-screen';
+        case 'game-umfragewerte':
+          switch (currentGameState) {
+            case 1:
+              view = currentGame;
+              break;
+          }
           break;
-        case -1:
-          currentViewID = 'points-panel';
+        case 'game-mapfinder':
+          switch (currentGameState) {
+            case 1:
+              view = currentGame;
+              break;
+          }
           break;
-        case 0:
-          currentViewID = 'waiting-screen';
+        case 'game-teamguessing':
+          document.getElementById('player-text-answer-input').type = 'number';
+          switch (currentGameState) {
+            case 1:
+              view = currentGame;
+              break;
+          }
           break;
-        case 1:
-          currentViewID = 'game-quiz-question';
+        case 'game-multiple-choice':
+          switch (currentGameState) {
+            case 2:
+              view = currentGame;
+              break;
+          }
           break;
-        case 2:
-          currentViewID = 'game-umfragewerte';
+        case 'game-creative-writing':
+          document.getElementById('player-text-answer-input').type = 'text';
+          switch (currentGameState) {
+            case 1:
+              view = 'game-teamguessing';
+              break;
+            case 2:
+              view = 'game-creative-writing';
+              break;
+          }
           break;
-        case 3:
-          currentViewID = 'game-einsortieren';
-          break;
-        case 4:
-          currentViewID = 'game-pantomime';
-          break;
-        case 5:
-          currentViewID = 'game-kategorie';
-          break;
-        case 6:
-          currentViewID = 'game-mapfinder';
-          break;
-        case 7:
-          currentViewID = 'game-whoisthis';
-          break;
-        case 8:
-          currentViewID = 'game-songs';
-          break;
-        case 9:
-          currentViewID = 'game-teamguessing';
-          break;
-        case 10:
-          currentViewID = 'game-multiple-choice';
-          break;
-        case 11:
-          currentViewID = 'game-creative-writing';
-          break;
-        case 12:
-          currentViewID = 'game-blamieren-kassieren';
-          break;
-        case 13:
-          currentViewID = 'game-teamguessing';
+        case 'login-screen':
+          view = currentGame;
           break;
         default:
-          currentViewID = 'games-panel';
+          view = 'waiting-screen';
           break;
       }
       document
         .querySelectorAll('.game-container > div')
         .forEach((elem) => elem.classList.add('hidden'));
-      document.getElementById(currentViewID).classList.remove('hidden');
+      document.getElementById(view).classList.remove('hidden');
       map.invalidateSize();
     }
 
-    CURRENT_VIEW = -2;
-    changeView(CURRENT_VIEW);
+    currentGame = 'login-screen';
+    changeView();
   </script>
 </html>

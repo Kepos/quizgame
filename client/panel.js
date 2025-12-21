@@ -26,7 +26,7 @@ let game_payload;
 let quizData;
 
 async function loadQuizData() {
-  const response = await fetch('questions/questions.json');
+  const response = await fetch('../questions/questions.json');
   const data = await response.json();
 
   quizData = data.gameQuestions;
@@ -55,7 +55,11 @@ const onPlayButtonClicked = (sock) => () => {
   });
 
   sock.on('Buzzer', (name) => {
-    document.getElementById('namelabel').innerHTML = name + ' buzzered!';
+    document.getElementById('buzzer-namelabel').innerHTML = name + ' buzzered!';
+    document.getElementById('buzzer').classList.remove('hidden');
+    setTimeout(() => {
+      document.getElementById('buzzer').classList.add('hidden');
+    }, 3000);
   });
 
   sock.on('new-game', (newGame) => {
@@ -237,9 +241,7 @@ function setCurrentGameView() {
             .getElementById('game-multiple-choice-question')
             .classList.add('hidden');
           setTimeout(() => {
-            let rand = Math.floor(Math.random() * 16);
-            let rand2 = Math.floor(Math.random() * 16);
-            updateChart(rand, rand2);
+            updateChart(game_payload?.yes, game_payload?.no);
           }, 1000);
           currentGameState = 0;
           break;
@@ -303,6 +305,56 @@ function setCurrentGameView() {
             .getElementById('game-mapfinder-question')
             .classList.add('hidden');
           document.getElementById('map').classList.remove('hidden');
+
+          game_payload.forEach((marker) => {
+            const teamColors = ['#ce5bd3', '#5bd35b', '#c33838', '#d3cd5b'];
+            const teamHues = [
+              'hue-rotate-15',
+              'hue-rotate-90',
+              'hue-rotate-180',
+              'hue-rotate-270',
+            ];
+
+            const markerHtmlStyles = `
+                background-color: ${teamColors[marker.team]};
+                width: 3rem;
+                height: 3rem;
+                display: block;
+                left: -1.5rem;
+                top: -1.5rem;
+                position: relative;
+                border-radius: 3rem 3rem 0;
+                transform: rotate(45deg);
+                border: 1px solid #FFFFFF`;
+
+            const icon = L.divIcon({
+              className: 'my-custom-pin',
+              iconAnchor: [0, 24],
+              labelAnchor: [-6, 0],
+              popupAnchor: [0, -36],
+              html: `<span style="${markerHtmlStyles}" />`,
+            });
+
+            // let newMarker = L.marker(marker.latlng, {
+            //   icon: icon,
+            // }).bindTooltip(marker.name, {
+            //   permanent: true,
+            //   direction: 'right',
+            // });
+
+            let newMarker = L.marker(marker.latlng).bindTooltip(marker.name, {
+              permanent: true,
+              direction: 'right',
+            });
+            markers.addLayer(newMarker);
+
+            L.DomUtil.addClass(newMarker._icon, teamHues[marker.team]);
+          });
+
+          //   setTimeout(() => {
+          //     markers.clearLayers();
+          //   }, 5000)
+
           currentGameState++;
           break;
         case 2:
@@ -397,22 +449,39 @@ function setCurrentGameView() {
     case 'game-multiple-choice':
       switch (currentGameState) {
         case 0:
+          // Show Question
           document
             .getElementById('game-multiple-choice-question')
             .classList.remove('hidden');
+          document
+            .getElementById('game-multiple-choice-answers')
+            .classList.add('hidden');
+          document
+            .querySelectorAll('.game-multiple-choice-votes')
+            .forEach((elem) => elem.classList.add('hidden'));
           currentGameState++;
           break;
         case 1:
+          // Show Answers
           document
             .getElementById('game-multiple-choice-answers')
             .classList.remove('hidden');
           currentGameState++;
           break;
         case 2:
-          document.getElementById(
-            'game-multiple-choice-question'
-          ).textContent += 'Show Votes!';
+          // Show Votes
+          document
+            .querySelectorAll('.game-multiple-choice-votes')
+            .forEach((elem) => elem.classList.remove('hidden'));
+          currentGameState++;
+          break;
+        case 3:
+          // Show Correct Answer
+          document
+            .querySelector('#game-multiple-choice-answers > div')
+            .classList.add('text-green-400');
           currentGameState = 0;
+          break;
           break;
       }
       break;

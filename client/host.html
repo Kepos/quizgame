@@ -34,15 +34,33 @@
         <span class="text-white">admin</span>
       </h1>
 
+      <div id="buzzer" class="absolute hidden top-10 left-10">
+        <div class="relative w-48 h-48">
+          <!-- Rotierender Stern (PNG) -->
+          <img
+            src="./assets/buzzer-star.png"
+            class="absolute inset-0 w-full h-full object-contain animate-[spin_4s_linear_infinite]"
+            alt="Stern"
+          />
+          <!-- Unbeweglicher Text -->
+          <div
+            id="buzzer-namelabel"
+            class="absolute font-bold -rotate-7 inset-0 flex items-center justify-center text-black font-[Monotalic] text-base text-center pointer-events-none"
+          >
+            Titus<br />buzzered!
+          </div>
+        </div>
+      </div>
+
       <!-- Table + Current Game Container -->
       <div id="host-view" class="flex flex-row w-full p-10">
         <!-- Player Table -->
-        <div id="player-table" class="flex-1 text-center hiddden">
+        <div class="flex-1 text-center hiddden">
           <!-- Tabelle: 16 Reihen x 3 Spalten (kein Header) -->
           <div class="overflow-x-auto">
             <table class="min-w-full text-sm table-fixed">
-              <tbody class="text-xl divide-y divide-gray-200">
-                <tr class="odd:bg-transparent even:bg-transparent">
+              <tbody id="player-table" class="text-xl divide-y divide-gray-200">
+                <!-- <tr class="odd:bg-transparent even:bg-transparent">
                   <td class="px-4 py-2 break-words">Titus</td>
                   <td class="px-4 py-2 text-center">1</td>
                   <td class="px-4 py-2 text-center">355</td>
@@ -122,7 +140,7 @@
                   <td class="px-4 py-2 break-words">Name 16</td>
                   <td class="px-4 py-2 text-center">0</td>
                   <td class="px-4 py-2 text-center">Team P</td>
-                </tr>
+                </tr> -->
               </tbody>
             </table>
           </div>
@@ -262,37 +280,39 @@
               <img
                 src="./assets/CueCard.png"
                 alt="Bild 16"
-                class="rounded-lg w-[350px] bg-blue-700"
+                class="rounded-lg w-[350px] bg-blue-700 bg-opacity-75"
                 onclick="onGameCardClicked(this)"
                 data-game="game-mitspieler"
               />
             </div>
-            <div class="flex flex-row justify-between mt-12 space-x-5">
+
+            <!-- Team Scores & Buttons -->
+            <div class="flex flex-row justify-between mt-12 space-x-22">
               <div class="flex-1 text-center">
                 <span class="team-name-label">Team 1</span><br />
                 <input
                   id="team-score-input-1"
                   type="number"
-                  class="py-4 text-xl text-center text-black bg-white w-28 rounded-2xl"
+                  class="py-1 text-xl text-center text-black bg-white w-28 rounded-2xl"
                   value="0"
                 />
                 <div class="flex flex-row w-full mt-3 space-x-2">
                   <button
                     class="flex-1 bg-green-700 cursor-pointer"
-                    onclick="incrementScore('team-score-input-1', 100)"
+                    onclick="incrementScore('team-score-input-1', 50)"
                   >
                     +50
                   </button>
                   <button
                     class="flex-1 bg-green-700 cursor-pointer"
-                    onclick="incrementScore('team-score-input-1', 50)"
+                    onclick="incrementScore('team-score-input-1', 100)"
                   >
                     +100
                   </button>
                 </div>
                 <button
                   id="login-button1"
-                  class="cursor-pointer text-xl text-black px-10 py-1 rounded-2xl bg-[#ce5bd3] mt-10 mb-10"
+                  class="cursor-pointer text-xl text-black px-10 py-1 rounded-2xl bg-[#ce5bd3] mt-10"
                   onclick="onScoreSendButtonClicked(1)"
                 >
                   Senden
@@ -303,7 +323,7 @@
                 <input
                   id="team-score-input-2"
                   type="number"
-                  class="py-4 text-xl text-center text-black bg-white w-28 rounded-2xl"
+                  class="py-1 text-xl text-center text-black bg-white w-28 rounded-2xl"
                   value="0"
                 />
                 <div class="flex flex-row w-full mt-3 space-x-2">
@@ -322,7 +342,7 @@
                 </div>
                 <button
                   id="login-button1"
-                  class="cursor-pointer text-xl text-black px-10 py-1 rounded-2xl bg-[#ce5bd3] mt-10 mb-10"
+                  class="cursor-pointer text-xl text-black px-10 py-1 rounded-2xl bg-[#5bd35b] mt-10"
                   onclick="onScoreSendButtonClicked(2)"
                 >
                   Senden
@@ -333,7 +353,7 @@
                 <input
                   id="team-score-input-3"
                   type="number"
-                  class="py-4 text-xl text-center text-black bg-white w-28 rounded-2xl"
+                  class="py-1 text-xl text-center text-black bg-white w-28 rounded-2xl"
                   value="0"
                 />
                 <div class="flex flex-row w-full mt-3 space-x-2">
@@ -352,7 +372,7 @@
                 </div>
                 <button
                   id="login-button1"
-                  class="cursor-pointer text-xl text-black px-10 py-1 rounded-2xl bg-[#ce5bd3] mt-10 mb-10"
+                  class="cursor-pointer text-xl text-black px-10 py-1 rounded-2xl bg-[#c33838] mt-10"
                   onclick="onScoreSendButtonClicked(3)"
                 >
                   Senden
@@ -363,7 +383,7 @@
                 <input
                   id="team-score-input-4"
                   type="number"
-                  class="py-4 text-xl text-center text-black bg-white w-28 rounded-2xl"
+                  class="py-1 text-xl text-center text-black bg-white w-28 rounded-2xl"
                   value="0"
                 />
                 <div class="flex flex-row w-full mt-3 space-x-2">
@@ -382,7 +402,7 @@
                 </div>
                 <button
                   id="login-button1"
-                  class="cursor-pointer text-xl text-black px-10 py-1 rounded-2xl bg-[#ce5bd3] mt-10 mb-10"
+                  class="cursor-pointer text-xl text-black px-10 py-1 rounded-2xl bg-[#d3cd5b] mt-10"
                   onclick="onScoreSendButtonClicked(4)"
                 >
                   Senden
@@ -447,6 +467,92 @@
           <div id="game-blamieren-kassieren" class="hidden"></div>
           <!-- Game #16 Mitspieler schätzen -->
           <div id="game-mitspieler" class="hidden"></div>
+
+          <div
+            id="game-points"
+            class="flex flex-row justify-between mt-10 space-x-28"
+          >
+            <div class="flex flex-row flex-1 space-x-2">
+              <button
+                class="w-8 p-2 bg-red-700 cursor-pointer rounded-4xl"
+                onclick="incrementScore('team-points-input-1', -1)"
+              >
+                -1
+              </button>
+              <input
+                id="team-points-input-1"
+                type="number"
+                class="w-12 py-1 text-xl text-center text-black bg-white rounded-2xl"
+                value="0"
+              />
+              <button
+                class="w-8 p-2 bg-green-700 cursor-pointer rounded-4xl"
+                onclick="incrementScore('team-points-input-1', 1)"
+              >
+                +1
+              </button>
+            </div>
+            <div class="flex flex-row flex-1 space-x-2">
+              <button
+                class="w-8 p-2 bg-red-700 cursor-pointer rounded-4xl"
+                onclick="incrementScore('team-points-input-2', -1)"
+              >
+                -1
+              </button>
+              <input
+                id="team-points-input-2"
+                type="number"
+                class="w-12 py-1 text-xl text-center text-black bg-white rounded-2xl"
+                value="0"
+              />
+              <button
+                class="w-8 p-2 bg-green-700 cursor-pointer rounded-4xl"
+                onclick="incrementScore('team-points-input-2', 1)"
+              >
+                +1
+              </button>
+            </div>
+            <div class="flex flex-row flex-1 space-x-2">
+              <button
+                class="w-8 p-2 bg-red-700 cursor-pointer rounded-4xl"
+                onclick="incrementScore('team-points-input-3', -1)"
+              >
+                -1
+              </button>
+              <input
+                id="team-points-input-3"
+                type="number"
+                class="w-12 py-1 text-xl text-center text-black bg-white rounded-2xl"
+                value="0"
+              />
+              <button
+                class="w-8 p-2 bg-green-700 cursor-pointer rounded-4xl"
+                onclick="incrementScore('team-points-input-3', 1)"
+              >
+                +1
+              </button>
+            </div>
+            <div class="flex flex-row flex-1 space-x-2">
+              <button
+                class="w-8 p-2 bg-red-700 cursor-pointer rounded-4xl"
+                onclick="incrementScore('team-points-input-4', -1)"
+              >
+                -1
+              </button>
+              <input
+                id="team-points-input-4"
+                type="number"
+                class="w-12 py-1 text-xl text-center text-black bg-white rounded-2xl"
+                value="0"
+              />
+              <button
+                class="w-8 p-2 bg-green-700 cursor-pointer rounded-4xl"
+                onclick="incrementScore('team-points-input-4', 1)"
+              >
+                +1
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -544,6 +650,7 @@
       document.getElementById(view).classList.remove('hidden');
       if (currentGame != 'games-panel')
         document.getElementById('game-header').classList.remove('hidden');
+      document.getElementById('game-points').classList.remove('hidden');
     }
 
     changeView();

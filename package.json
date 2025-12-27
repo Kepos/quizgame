@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@emnapi/core": "^1.7.1",
     "@tailwindcss/cli": "^4.1.17",
     "express": "^4.18.2",
     "nodemon": "^2.0.20",

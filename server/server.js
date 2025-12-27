@@ -1,7 +1,6 @@
 const http = require('http');
 const express = require('express');
 const socketio = require('socket.io');
-const { truncateSync } = require('fs');
 // const createGame = require('./create-game');
 
 const app = express();

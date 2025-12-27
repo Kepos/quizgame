@@ -49,6 +49,8 @@ let teams = [
   { points: 0, members: new Map(), color: '#d3cd5b', avgAnswer: 0, index: 3 },
 ];
 
+let buzzerBlocked = false;
+
 io.on('connection', (sock) => {
   const playerID = sock.id;
   let playerIndex;
@@ -69,12 +71,17 @@ io.on('connection', (sock) => {
   sock.on('message', (text) => console.log(`got text: ${text}`));
 
   sock.on('Buzzer', (playerID) => {
+    if (buzzerBlocked) return;
     teams.forEach((team, index) => {
       let member = team.members.get(playerID);
       if (member) {
         io.emit('Buzzer', { name: member.name, team: index });
       }
     });
+    buzzerBlocked = true;
+    setTimeout(() => {
+      buzzerBlocked = false;
+    }, 3000);
   });
 
   sock.on('Login', (playerObj, callback) => {

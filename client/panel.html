@@ -29,14 +29,23 @@
       class="flex flex-col items-center justify-start h-full pt-56 game-container"
     >
       <h1
-        class="absolute top-20"
+        class="absolute translate-x-3 top-20"
         onclick="currentGame = 'games-panel'; changeView()"
       >
-        o holy<br />
-        <span class="text-[#d5d514]"
-          >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gamenight!</span
-        >
+        <span>o </span>
+        <span>holy</span><br />
+        <span class="text-gray-300">&nbsp;quiz</span>
+        <span class="text-[#d5d514] ml-[-5px]">night!</span>
       </h1>
+
+      <div id="start-spinner" class="">
+        <img
+          src="./assets/buzzer-star-1.png"
+          class="absolute inset-0 w-full h-full object-contain animate-[spin_4s_linear_infinite]"
+          alt="Stern"
+          id="buzzer-star"
+        />
+      </div>
 
       <div id="buzzer" class="absolute hidden top-64 left-64">
         <div class="relative w-76 h-76">

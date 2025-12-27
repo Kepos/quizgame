@@ -8,15 +8,15 @@
           "image": ""
         },
         {
-          "question": "Wie heißt Obama mit zweitem Vornamen?",
-          "image": ""
-        },
-        {
           "question": "Mit welchem Gemüse experimentierte Mendel?",
           "image": ""
         },
         {
-          "question": "Wer ist der reichste Europäaer",
+          "question": "Welcher Film gewann dieses Jahr 'Best Picture' bei den Oscars?",
+          "image": ""
+        },
+        {
+          "question": "Wie heißen die heiligen drei Könige?",
           "image": ""
         }
       ]
@@ -25,19 +25,19 @@
       "title": "Q2",
       "questions": [
         {
-          "question": "Nenne einen römischen Kaiser nach dem Jahr 0",
+          "question": "Bei welchen Tieren werden die Männchen schwanger?",
           "image": ""
         },
         {
-          "question": "Wie heißt Obama mit zweitem Vornamen?",
+          "question": "Wer ist der reichste Europäer?",
           "image": ""
         },
         {
-          "question": "Mit welchem Gemüse experimentierte Mendel?",
+          "question": "Welchen Schauspieler datete Pamela Anderson 2025?",
           "image": ""
         },
         {
-          "question": "Wer ist der reichste Europäaer",
+          "question": "Was ist die Hauptstadt vom Iran?",
           "image": ""
         }
       ]
@@ -46,19 +46,19 @@
       "title": "Q3",
       "questions": [
         {
-          "question": "Nenne einen römischen Kaiser nach dem Jahr 0",
+          "question": "Nenne einen Charakter aus der Zauberflöte!",
           "image": ""
         },
         {
-          "question": "Wie heißt Obama mit zweitem Vornamen?",
+          "question": "Wohin war die Titanic unterwegs?",
           "image": ""
         },
         {
-          "question": "Mit welchem Gemüse experimentierte Mendel?",
+          "question": "Wen moderierte Thomas Gottschalk beim Bambi an?",
           "image": ""
         },
         {
-          "question": "Wer ist der reichste Europäaer",
+          "question": "Wie heißt der Knochen 'Radius' auf Deutsch?",
           "image": ""
         }
       ]
@@ -67,19 +67,19 @@
       "title": "Q4",
       "questions": [
         {
-          "question": "Nenne einen römischen Kaiser nach dem Jahr 0",
+          "question": "Welches ist das meistverkaufte Brettspiel der Welt?",
           "image": ""
         },
         {
-          "question": "Wie heißt Obama mit zweitem Vornamen?",
+          "question": "Woran starb Ötzi?",
           "image": ""
         },
         {
-          "question": "Mit welchem Gemüse experimentierte Mendel?",
+          "question": "Wer malte das Gemälde 'Wanderer über dem Nebelmeer'?",
           "image": ""
         },
         {
-          "question": "Wer ist der reichste Europäaer",
+          "question": "Von welchem deutschen Schriftsteller ist das Gedicht 'Herr von Ribbeck'?",
           "image": ""
         }
       ]
@@ -88,19 +88,19 @@
       "title": "Statistics!",
       "questions": [
         {
-          "question": "Wer hatte schonmal nen Plug im Ass?",
+          "question": "Wer hat sich schonmal was gebrochen?",
           "image": ""
         },
         {
-          "question": "Wer war schonmal im Fernsehen?",
+          "question": "Wer hat schonmal ein Sextoy gekauft?",
           "image": ""
         },
         {
-          "question": "Bodycount über 15? / Fallschirmspringen / Letzen Monat im Kino / Im Gym /",
+          "question": "Wer war schonmal in der Zeitung zu sehen?",
           "image": ""
         },
         {
-          "question": "Wurde schonmal bei einer sexuellen Aktivität erwischt",
+          "question": "Wer hat schonmal selbst Tiramisu gemacht?",
           "image": ""
         }
       ]
@@ -120,11 +120,35 @@
           "Graz",
           "Porto"
         ],
-        ["Center Word", "1", "2", "3", "Center Word", "4", "5", "6", "7", "8"]
+        [
+          "John F. Kennedy",
+          "Frank D. Roosevelt",
+          "Harry S. Truman",
+          "Dwight D. Einsenhower",
+          "John F. Kennedy",
+          "Lyndon B. Johnson",
+          "Richard Nixon",
+          "Gerald Ford",
+          "Ronald Reagan",
+          "Bill Clinton"
+        ],
+        [
+          "Netflix",
+          "NVIDIA",
+          "Apple",
+          "Microsoft",
+          "Amazon",
+          "Meta",
+          "Tesla",
+          "Netflix",
+          "Coca-Cola",
+          "Nestle"
+        ]
       ],
       "indicators": [
         ["viel", "wenig"],
-        ["früh", "spät"]
+        ["früh", "spät"],
+        ["viel", "wenig"]
       ]
     },
     "game-pantomime": {
@@ -138,11 +162,19 @@
       "questions": [
         {
           "question": "Wo steht die größte Statue der Welt?",
-          "answer": { "lat": 49.49, "lng": 11.11 }
+          "answer": { "lat": 21.838, "lng": 73.7191 }
         },
         {
-          "question": "Wo steht die kleinste Statue der Welt?",
-          "answer": { "lat": 49.49, "lng": 11.11 }
+          "question": "Wo ist Mount Rushmore?",
+          "answer": { "lat": 43.8789472, "lng": -103.459825 }
+        },
+        {
+          "question": "Wo ist das Herrmannsdenkmal?",
+          "answer": { "lat": 51.911637, "lng": 8.839489 }
+        },
+        {
+          "question": "Wo finden die nächsten Olympschen Sommerspiele statt?",
+          "answer": { "lat": 34.052235, "lng": -118.243683 }
         }
       ]
     },
@@ -150,10 +182,40 @@
       "title": "Who is this?",
       "questions": [
         {
-          "image": "StephCurry"
+          "image": "LaurenSanchez.jpg"
         },
         {
-          "image": "BillMurray"
+          "image": "JerrySeinfeld.jpg"
+        },
+        {
+          "image": "Harold.jpg"
+        },
+        {
+          "image": "JohnOliver.jpg"
+        },
+        {
+          "image": "RobReiner.jpg"
+        },
+        {
+          "image": "BaerbelBas.jpg"
+        },
+        {
+          "image": "AndyMurray.jpg"
+        },
+        {
+          "image": "ShuyGuy.png"
+        },
+        {
+          "image": "Link.webp"
+        },
+        {
+          "image": "Nasser.jpg"
+        },
+        {
+          "image": "LarsMittank.jpg"
+        },
+        {
+          "image": "Margaret.jpeg"
         }
       ]
     },
@@ -164,12 +226,20 @@
       "title": "TeamGuessing!",
       "questions": [
         {
-          "question": "Wieviel Geld hat Elon Musk in $",
-          "answer": 500000000000
+          "question": "Wann wurde der Christkindelsmarkt erstmals nachweislich erwähnt?",
+          "answer": 1678
         },
         {
-          "question": "Wie weit ist die Luftlinie zwischen XY und Z?",
-          "answer": 3478
+          "question": "Wieviel Geld in $ hat Elon Musk?",
+          "answer": 752000000000
+        },
+        {
+          "question": "Wieviele Folgen haben die Simpsons?",
+          "answer": 801
+        },
+        {
+          "question": "Wieviel Butter in Gramm aß ein Deutscher im Schnitt 2024?",
+          "answer": 5300
         }
       ]
     },
@@ -178,13 +248,63 @@
       "questions": [
         {
           "question": "Wie heißt die Mutter von Niki Lauda?",
-          "answers": ["Astrid", "Berta", "Kunigunde", "Andrea"],
+          "answers": ["Astrid", "Claudia", "Elisabeth", "Barbara"],
           "correct": 2
         },
         {
-          "question": "Welches Land grenzt an ein Superbinnenstaat?",
-          "answers": ["Österreich", "Pakistan", "DR Kongo", "Bolivien"],
+          "question": "Warum ist das Löwengehege in Nürnberg gesperrt? Aarany...",
+          "answers": [
+            "kriegt Nachwuchs",
+            "hat einen Besucher gebissen",
+            "hat Tollwut",
+            "ist gestorben"
+          ],
+          "correct": 0
+        },
+        {
+          "question": "Wie heißt der schwere Uni-Aufnametest in China?",
+          "answers": ["Shizi", "Gaokao", "Pingzi", "Shengdan Jie"],
+          "correct": 1
+        },
+        {
+          "question": "Wo herrscht der älteste König in Europa?",
+          "answers": ["Spain", "England", "Norway", "Netherlands"],
+          "correct": 2
+        },
+        {
+          "question": "Welche Auszeichnung bekommt der schönste Stand beim CKM?",
+          "answers": [
+            "Goldenes Christking",
+            "Goldener Lebkuchen",
+            "Goldener Zwetschgermoh",
+            "Goldene 3 im Weckla"
+          ],
+          "correct": 2
+        },
+        {
+          "question": "In welcher Chat-App wurde dieses Jahr ein Journalist in eine US-National Security Gruppe hinzugefügt?",
+          "answers": ["Threema", "Wire", "Telegram", "Signal"],
           "correct": 3
+        },
+        {
+          "question": "Was ist die nächste perfekte Zahl nach 6?",
+          "answers": ["16", "20", "22", "28"],
+          "correct": 3
+        },
+        {
+          "question": "Was hiervon ist kein Pokemon, sondern eine Droge?",
+          "answers": ["Braixen", "Duosion", "Fezandipiti", "Nerlynx"],
+          "correct": 3
+        },
+        {
+          "question": "Wie viele Blattgold-Schichten braucht man für 1 MM?",
+          "answers": ["100", "1000", "10000", "100000"],
+          "correct": 2
+        },
+        {
+          "question": "Was hat Titus NICHT zu Weihnachten bekommen?",
+          "answers": ["Powerbank", "Pfanne", "Zahnbürste", "Unterhosen"],
+          "correct": 1
         }
       ]
     },
@@ -195,7 +315,13 @@
           "question": "Wie sollte eine Bar in Nürnberg heißen?"
         },
         {
-          "question": "Wie heißt ein neuer HP-Charakter?"
+          "question": "Wie heißt Dany's Wrestling Alter-Ego?"
+        },
+        {
+          "question": "Wie heißt der nächste Bestseller Roman 2026?"
+        },
+        {
+          "question": "Wie heißt unsere neue Komdom-Marke?"
         }
       ]
     },
@@ -205,9 +331,10 @@
     "game-mitspieler": {
       "title": "Say the Same!",
       "questions": [
-        "Was isst du am liebsten: Kartoffeln, Reis oder Nudeln?",
-        "Nennt beide ein Land in Europa",
-        "Nenne ein Haustier"
+        "Nenne ein Land in Afrika",
+        "Was isst X am liebsten: Kartoffeln, Reis, Nudeln?",
+        "Nenne einen Film von Tarantino",
+        "Nenne eine Automarke"
       ]
     }
   }

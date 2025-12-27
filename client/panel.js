@@ -567,8 +567,7 @@ function setCurrentGameView() {
           if (arr.length > currentGameState) {
             document.getElementById('game-whoisthis-img').src =
               './assets/' +
-              quizData[currentGame].questions[currentGameState].image +
-              '.png';
+              quizData[currentGame].questions[currentGameState].image;
             currentGameState++;
           }
           break;

@@ -38,6 +38,15 @@ async function loadQuizData() {
 }
 loadQuizData();
 
+const buzzerSound = new Audio('./assets/buzzer.wav');
+const shortApplauseSound = new Audio('./assets/short_applause.mp3');
+const longApplauseSound = new Audio('./assets/long_applause.mp3');
+const correctSound = new Audio('./assets/right_sound.mp3');
+const falseSound = new Audio('./assets/wrong_sound.mp3');
+const timerSound = new Audio('./assets/timer.mp3');
+const booSound = new Audio('./assets/booing.mp3');
+const laughSound = new Audio('./assets/laughing.mp3');
+
 // Key Press Events
 document.addEventListener('keydown', function (event) {
   console.log(event.key);
@@ -50,6 +59,43 @@ document.addEventListener('keydown', function (event) {
       break;
     case 't':
       reloadTable();
+      break;
+    case 'Enter':
+      if (currentGame == 'games-panel') {
+        sock.emit('start-quiz');
+      } else {
+        document.getElementById('nextButton').click();
+      }
+      break;
+    case 'p':
+      if (currentGame == 'games-panel') {
+        sock.emit('end-screen');
+      }
+      break;
+    case 'a':
+      shortApplauseSound.currentTime = 0;
+      shortApplauseSound.play();
+      break;
+    case 'A':
+      longApplauseSound.currentTime = 0;
+      longApplauseSound.play();
+      break;
+    case 'r':
+      correctSound.currentTime = 0;
+      correctSound.play();
+      break;
+    case 'f':
+      falseSound.currentTime = 0;
+      falseSound.play();
+      break;
+    case 'b':
+      booSound.currentTime = 0;
+      booSound.play();
+      break;
+    case 'l':
+      laughSound.currentTime = 0;
+      laughSound.play();
+      break;
   }
 });
 
@@ -184,6 +230,9 @@ function setSelectionOptions() {
     document.getElementById('buzzer-star').src = `./assets/buzzer-star-${
       member.team + 1
     }.png`;
+
+    buzzerSound.currentTime = 100;
+    buzzerSound.play();
 
     setTimeout(() => {
       document.getElementById('buzzer').classList.add('hidden');
@@ -321,6 +370,10 @@ function setCurrentGameView() {
       switch (currentGameState) {
         case 0:
           nextButton.textContent = 'Start Timer';
+          nextButton.onclick = () => {
+            let timervalue = document.getElementById('timer-setter-p').value;
+            onNextButtonClicked(parseInt(timervalue));
+          };
           break;
       }
       break;
@@ -330,6 +383,10 @@ function setCurrentGameView() {
       switch (currentGameState) {
         case 0:
           nextButton.textContent = 'Start Timer';
+          nextButton.onclick = () => {
+            let timervalue = document.getElementById('timer-setter-k').value;
+            onNextButtonClicked(parseInt(timervalue));
+          };
           break;
       }
       break;

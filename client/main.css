@@ -89,3 +89,66 @@ input::placeholder {
   border-radius: 50%;
   border: 2px solid white;
 }
+
+/* =====================
+   HERO TITLE
+===================== */
+
+.hero-title {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(3) rotate(-6deg);
+  transition: transform 2s linear, top 2s ease-out;
+  cursor: pointer;
+  z-index: 20;
+}
+
+.hero-title span {
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+/* Endzustand */
+.hero-title.is-final {
+  top: 80px;
+  transform: translate(-50%, 0) scale(1) rotate(-6deg);
+}
+
+/* =====================
+   SPINNER
+===================== */
+
+.spinner {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(7, 2, 46); /* optional */
+  z-index: 10;
+  transition: opacity 3s ease;
+  filter: hue-rotate(300deg);
+}
+
+.spinner-img {
+  width: 5000vw;
+  height: auto;
+  animation: spin 5.5s linear infinite;
+  mix-blend-mode: hard-light;
+  filter: opacity(0.35);
+}
+
+.spinner.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

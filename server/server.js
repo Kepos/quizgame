@@ -70,6 +70,14 @@ io.on('connection', (sock) => {
 
   sock.on('message', (text) => console.log(`got text: ${text}`));
 
+  sock.on('start-quiz', () => {
+    io.emit('start-quiz');
+  });
+
+  sock.on('end-screen', () => {
+    io.emit('end-screen');
+  });
+
   sock.on('Buzzer', (playerID) => {
     if (buzzerBlocked) return;
     teams.forEach((team, index) => {
@@ -252,9 +260,7 @@ io.on('connection', (sock) => {
     if (currentGame === 'game-multiple-choice') {
       let points = [0, 0, 0, 0];
       teams.forEach((team, teamindex) => {
-        team.members.forEach((member) => {
-          points[teamindex] += member.points;
-        });
+        points[teamindex] = team.avgAnswer;
       });
       payload = points;
     } else if (currentGame === 'game-creative-writing') {
@@ -264,6 +270,12 @@ io.on('connection', (sock) => {
       });
       payload = points;
     } else if (currentGame === 'game-teamguessing') {
+      let points = [0, 0, 0, 0];
+      teams.forEach((team, teamindex) => {
+        points[teamindex] = team.points;
+      });
+      payload = points;
+    } else if (currentGame === 'game-mapfinder') {
       let points = [0, 0, 0, 0];
       teams.forEach((team, teamindex) => {
         points[teamindex] = team.points;
@@ -509,7 +521,7 @@ io.on('connection', (sock) => {
             currentGameState++;
             emitCurrentState();
 
-            deleteAllPlayerAnswersAndPoints();
+            deleteAllPlayerAnswersAndPoints(false);
             emitTeams();
             break;
           case 1:
@@ -581,10 +593,11 @@ io.on('connection', (sock) => {
               payload = flatplayers.sort((a, b) => a.answer - b.answer);
               console.log(payload);
             }
-            teams.forEach(
-              (team, teamindex) =>
-                (team.avgAnswer /= teamsLegitAnswers[teamindex])
-            );
+            teams.forEach((team, teamindex) => {
+              if (teamsLegitAnswers[teamindex] > 0) {
+                team.avgAnswer /= teamsLegitAnswers[teamindex];
+              }
+            });
             callback({
               status: 'ok',
               nextUp: 'Show Team Average',
@@ -604,6 +617,22 @@ io.on('connection', (sock) => {
               });
             });
             payload = teamsObj;
+
+            teams.forEach((team) =>
+              console.log('Team Answers & Points', team.avgAnswer, team.points)
+            );
+
+            const rankedTeams = [...teams].sort((a, b) => {
+              return Math.abs(a.avgAnswer) - Math.abs(b.avgAnswer);
+            });
+
+            // Punktevergabe
+            const points = [3, 2, 1, 0];
+
+            rankedTeams.forEach((team, index) => {
+              team.points += points[index] ?? 0;
+            });
+
             callback({
               status: 'ok',
               nextUp: 'Show Next Question',

@@ -29,7 +29,8 @@
       class="flex flex-col items-center justify-start h-full pt-56 game-container"
     >
       <h1
-        class="absolute translate-x-3 top-20"
+        id="hero-title"
+        class="hero-title"
         onclick="currentGame = 'games-panel'; changeView()"
       >
         <span>o </span>
@@ -38,10 +39,10 @@
         <span class="text-[#d5d514] ml-[-5px]">night!</span>
       </h1>
 
-      <div id="start-spinner" class="">
+      <div id="start-spinner" class="spinner">
         <img
           src="./assets/buzzer-star-1.png"
-          class="absolute inset-0 w-full h-full object-contain animate-[spin_4s_linear_infinite]"
+          class="spinner-img"
           alt="Stern"
           id="buzzer-star"
         />
@@ -557,7 +558,7 @@
         <div id="game-pantomime" class="flex flex-col items-center hidden">
           <h2>Pantomime</h2>
           <span id="timer" class="mt-30 text-[200px] font-[Monotalic]"
-            >0:41</span
+            >1:00</span
           >
         </div>
 
@@ -1115,6 +1116,48 @@
       });
     }
 
+    function startIntro() {
+      const title = document.getElementById('hero-title');
+      const spans = title.querySelectorAll('span');
+      const spinner = document.getElementById('start-spinner');
+
+      // 1. Spans nacheinander einfaden
+      spans.forEach((span, i) => {
+        setTimeout(() => {
+          span.style.opacity = 1;
+        }, i * 1000);
+      });
+
+      // 2. Nach letztem Span: Titel bewegen + Spinner ausfaden
+      const totalSpanTime = spans.length * 1000;
+
+      setTimeout(() => {
+        title.classList.add('is-final');
+        spinner.classList.add('is-hidden');
+        setTimeout(() => {
+          //Fade in Images
+          const images = document.querySelectorAll(
+            '#games-panel img, #game-quiz-question img'
+          );
+          images.forEach((img, i) => {
+            setTimeout(() => {
+              img.classList.add('transition', 'duration-1500', 'opacity-100');
+            }, 1000 + (i % 16) * 200); // jedes Bild 200ms später
+          });
+        }, 1500);
+      }, totalSpanTime + 400);
+    }
+
+    function toggleEndScreen() {
+      const title = document.getElementById('hero-title');
+      const spinner = document.getElementById('start-spinner');
+      const snow = document.getElementById('snowfall-element');
+
+      title.classList.toggle('is-final');
+      spinner.classList.toggle('is-hidden');
+      snow.classList.toggle('z-30');
+    }
+
     function gameStartAnimation() {
       // changeView(true);
       // return;
@@ -1128,16 +1171,6 @@
         }, 6000);
       }, 1000);
     }
-
-    //Fade in Images
-    const images = document.querySelectorAll(
-      '#games-panel img, #game-quiz-question img'
-    );
-    images.forEach((img, i) => {
-      setTimeout(() => {
-        img.classList.add('transition', 'duration-1500', 'opacity-100');
-      }, 1000 + (i % 16) * 200); // jedes Bild 200ms später
-    });
 
     function animateGameName() {
       let currentGameTmp = currentGame;
@@ -1167,10 +1200,10 @@
       //     .classList.add('wave-path-2-move');
     }
 
-    let interval;
+    let timerInterval;
 
     function startTimer(durationInSeconds, spanId = 'timer') {
-      if (interval) clearInterval(interval);
+      if (timerInterval) clearInterval(timerInterval);
       let remaining = durationInSeconds;
       const span = document.getElementById(spanId);
 
@@ -1181,14 +1214,14 @@
         span.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
 
         if (remaining <= 0) {
-          clearInterval(interval);
+          clearInterval(timerInterval);
         }
 
         remaining--;
       }
 
       updateTimer(); // sofort anzeigen
-      interval = setInterval(updateTimer, 1000);
+      timerInterval = setInterval(updateTimer, 1000);
     }
 
     function changeView(changeGame = false) {

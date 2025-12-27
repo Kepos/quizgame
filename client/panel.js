@@ -39,6 +39,8 @@ let game_payload;
 
 let quizData;
 
+let gameHasStarted = false;
+
 async function loadQuizData() {
   const response = await fetch('../questions/questions.json');
   const data = await response.json();
@@ -68,14 +70,26 @@ const onPlayButtonClicked = (sock) => () => {
     document.getElementById('select-racetrack').style.display = 'inline';
   });
 
+  sock.on('start-quiz', () => {
+    if (!gameHasStarted) {
+      startIntro();
+    }
+    gameHasStarted = true;
+  });
+
+  sock.on('end-screen', () => {
+    toggleEndScreen();
+  });
+
   sock.on('Buzzer', (member) => {
     document.getElementById('buzzer-namelabel').innerHTML =
       member.name + '<br/>buzzered!';
     let buzzer = document.getElementById('buzzer');
-    buzzer.classList.remove('hidden');
     document.getElementById('buzzer-star').src = `./assets/buzzer-star-${
       member.team + 1
     }.png`;
+
+    buzzer.classList.remove('hidden');
 
     setTimeout(() => {
       document.getElementById('buzzer').classList.add('hidden');
@@ -124,6 +138,7 @@ const onPlayButtonClicked = (sock) => () => {
   sock.on('back-to-panel', () => {
     currentGame = 'games-panel';
     currentGameState = 0;
+    if (timerInterval) clearInterval(timerInterval);
     changeView(true); // id, Zielwert, Dauer in ms
   });
 
@@ -406,7 +421,7 @@ function setCurrentGameView() {
     case 'game-pantomime': {
       switch (currentGameState) {
         case 0: {
-          startTimer(60);
+          startTimer(game_payload);
           break;
         }
       }
@@ -416,7 +431,7 @@ function setCurrentGameView() {
     case 'game-kategorie': {
       switch (currentGameState) {
         case 0: {
-          startTimer(60);
+          startTimer(game_payload);
           break;
         }
       }
@@ -508,10 +523,6 @@ function setCurrentGameView() {
                 L.DomUtil.addClass(newMarker._icon, teamHues[marker.team][0]);
                 L.DomUtil.addClass(newMarker._icon, teamHues[marker.team][1]);
               });
-
-            setTimeout(() => {
-              markers.clearLayers();
-            }, 5000);
 
             currentGameState++;
             break;
